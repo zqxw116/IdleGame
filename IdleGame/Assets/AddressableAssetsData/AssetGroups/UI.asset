@@ -10,22 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: UI
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
+  m_GroupName: UI
   m_Data:
     m_SerializedData: []
-  m_GUID: b5b0e4758b76c364fb46d41028de8372
-  m_SerializeEntries:
-  - m_GUID: 5d418efd81401c249a291b8bc2c6c6d4
-    m_Address: Assets/@Resources/Data/JsonData/TestData.json
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
+  m_GUID: 2b47ec9c5747854468e66616e7cd5d5b
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 0799c9d1a25a2fa4d86bf3bf0db8205b, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 0404fe52be8045a4cae208e39a2e122f, type: 2}
-    - {fileID: 11400000, guid: da1b357126c290647b71815d52813056, type: 2}
+    - {fileID: 11400000, guid: 31354383a7560a142a871c0fe96063a5, type: 2}
+    - {fileID: 11400000, guid: 6eb15883caff411409735690ad79d373, type: 2}

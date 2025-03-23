@@ -49,13 +49,14 @@ public class UI_TitleScene : UI_Scene
 
 			if (count == totalCount)
 			{
-				//Managers.Data.Init();
+				Managers.Data.Init();
 
 				GetObject((int)GameObjects.Image_BackGround).gameObject.SetActive(true);
 				GetText((int)Texts.Text_Display).text = "Touch To Start";
 
+                //Managers.Data.TestDic;
 
-			}
-		});
+            }
+        });
 	}
 }
