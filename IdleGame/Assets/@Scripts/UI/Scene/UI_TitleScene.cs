@@ -8,7 +8,7 @@ public class UI_TitleScene : UI_Scene
 {
     enum GameObjects
     {
-        Image_BackGround
+        Image_StartTouch,
     }
 
     enum Texts
@@ -27,13 +27,13 @@ public class UI_TitleScene : UI_Scene
         BindObjects(typeof(GameObjects));
         BindTexts(typeof(Texts));
 
-		GetObject((int)GameObjects.Image_BackGround).BindEvent((evt) =>
+		GetObject((int)GameObjects.Image_StartTouch).BindEvent((evt) =>
 		{
 			Debug.Log("ChangeScene");
 			Managers.Scene.LoadScene(EScene.GameScene);
 		});
 
-		GetObject((int)GameObjects.Image_BackGround).gameObject.SetActive(false);
+		GetObject((int)GameObjects.Image_StartTouch).gameObject.SetActive(false);
 		GetText((int)Texts.Text_Display).text = $"";
 
 		StartLoadAssets();
@@ -51,8 +51,8 @@ public class UI_TitleScene : UI_Scene
 			{
 				Managers.Data.Init();
 
-				GetObject((int)GameObjects.Image_BackGround).gameObject.SetActive(true);
-				GetText((int)Texts.Text_Display).text = "Touch To Start";
+				GetObject((int)GameObjects.Image_StartTouch).gameObject.SetActive(true);
+				GetText((int)Texts.Text_Display).text = "Touch To Start~!";
 
                 //Managers.Data.TestDic;
 
