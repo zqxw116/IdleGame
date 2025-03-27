@@ -16,17 +16,19 @@ public class Hero : Creature
 		CreatureState = ECreatureState.Idle;
 		Speed = 5.0f;
 
-		//Managers.Game.OnMoveDirChanged -= HandleOnMoveDirChanged;
-		//Managers.Game.OnMoveDirChanged += HandleOnMoveDirChanged;
-		//Managers.Game.OnJoystickStateChanged -= HandleOnJoystickStateChanged;
-		//Managers.Game.OnJoystickStateChanged += HandleOnJoystickStateChanged;
+		// +만 해도 된다. 위에서 Init으로 예외처리를 하지만,
+		// 실수로 혹여나 같은 개체가 두번 처리될 수 있기 때문에 습관적으로 - + 추가.
+		Managers.Game.OnMoveDirChanged -= HandleOnMoveDirChanged;
+		Managers.Game.OnMoveDirChanged += HandleOnMoveDirChanged;
+		Managers.Game.OnJoystickStateChanged -= HandleOnJoystickStateChanged;
+		Managers.Game.OnJoystickStateChanged += HandleOnJoystickStateChanged;
 
 		return true;
 	}
 
 	void Update()
 	{
-		//transform.TranslateEx(_moveDir * Time.deltaTime * Speed);
+		transform.Translate(_moveDir * Time.deltaTime * Speed);
 	}
 
 	private void HandleOnMoveDirChanged(Vector2 dir)

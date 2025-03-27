@@ -16,9 +16,15 @@ public class GameScene : BaseScene
 		map.name = "@BaseMap";
 		map.transform.position = Vector3.zero;
 
-		// TODO
+		Hero hero = Managers.Object.Spawn<Hero>(Vector3.zero);
+		hero.CreatureState = ECreatureState.Move;
 
-		return true;
+		Managers.UI.ShowBaseUI<UI_Joystick>();
+
+
+        // TODO
+
+        return true;
 	}
 
 	public override void Clear()
