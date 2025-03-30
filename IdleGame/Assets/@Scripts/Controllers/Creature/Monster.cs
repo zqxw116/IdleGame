@@ -55,14 +55,14 @@ public class Monster : Creature
 	public float SearchDistance { get; private set; } = 8.0f;
 	public float AttackDistance { get; private set; } = 4.0f;
 	Creature _target;
-	Vector3 _destPos;
-	Vector3 _initPos;
+	Vector3 _destPos; // 도착할 위치
+	Vector3 _initPos; // Init에 넣으면 awake에 호출돼서 위치값이 안맞을 수 있다. start에 적용
 
 	protected override void UpdateIdle()
 	{
-		Debug.Log("Idle");
+		Debug.Log("<Color=red>Idle</color>");
 
-		// Patrol
+		// Patrol(순찰)
 		{
 			int patrolPercent = 10;
 			int rand = Random.Range(0, 100);
@@ -74,48 +74,53 @@ public class Monster : Creature
 			}
 		}
 
-		// Search Player
+		// Search Player(플레이어 찾기)
 		{
 			Creature target = null;
-			float bestDistanceSqr = float.MaxValue;
-			float searchDistanceSqr = SearchDistance * SearchDistance;
+			float bestDistanceSqr = float.MaxValue;// 처음에는 큰값
+			float searchDistanceSqr = SearchDistance * SearchDistance; // 거리의 제곱을 비교. 루트를 사용하는 것 보다 효율성이 더 좋기 때문. 
 
-			//foreach (Hero hero in Managers.Object.Heroes)
-			//{
-			//	Vector3 dir = hero.transform.position - transform.position;
-			//	float distToTargetSqr = dir.sqrMagnitude;
+			// 너무 최적화를 신경쓰기에는 클라에서 수백개의 오브젝트는 괜찮다.   코드 진행하는 것이 중요.
+			foreach (Hero hero in Managers.Object.Heroes) // 유닛을 다 돌아본다.
+			{
+				Vector3 dir = hero.transform.position - transform.position;
+				float distToTargetSqr = dir.sqrMagnitude; // 루트를 사용하지 않는다.
 
-			//	Debug.Log(distToTargetSqr);
+				Debug.Log(distToTargetSqr);
 
-			//	if (distToTargetSqr > searchDistanceSqr)
-			//		continue;
+				if (distToTargetSqr > searchDistanceSqr) // 검색범위를 넘었으면 패스
+					continue;
 
-			//	if (distToTargetSqr > bestDistanceSqr)
-			//		continue;
+				if (distToTargetSqr > bestDistanceSqr)   // 이미 나보다 가까우면 패스
+					continue;
 
-			//	target = hero;
-			//	bestDistanceSqr = distToTargetSqr;
-			//}
+				target = hero;
+				bestDistanceSqr = distToTargetSqr;
+			}
 
-			_target = target;
+			_target = target; // 가장 가까운 것 찾음!
 
 			if (_target != null)
+			{
 				CreatureState = ECreatureState.Move;				
+				// ?~~
+			}
 		}
 	}
 
+	// 이동, 순찰 다양한 이동 함축적
 	protected override void UpdateMove()
 	{
-		Debug.Log("Move");
+		Debug.Log("<Color=red>Move</color>");
 
 		if (_target == null)
 		{
 			// Patrol or Return
 			Vector3 dir = (_destPos - transform.position);
 			float moveDist = Mathf.Min(dir.magnitude, Time.deltaTime * Speed);
-			//transform.TranslateEx(dir.normalized * moveDist);
+			transform.TranslateEx(dir.normalized * moveDist);
 
-			if (dir.sqrMagnitude <= 0.01f)
+			if (dir.sqrMagnitude <= 0.01f) // float 특성상 0이 아니다
 			{
 				CreatureState = ECreatureState.Idle;
 			}
@@ -136,15 +141,15 @@ public class Monster : Creature
 			else
 			{
 				// 공격 범위 밖이라면 추적.
-				float moveDist = Mathf.Min(dir.magnitude, Time.deltaTime * Speed);
-				//transform.TranslateEx(dir.normalized * moveDist);
+				float moveDist = Mathf.Min(dir.magnitude, Time.deltaTime * Speed); // 거리는 10인데 speed한 값이 20이면 초과해서 이동할테니 넘어가지 않게 최소값
+				transform.TranslateEx(dir.normalized * moveDist);
 
 				// 너무 멀어지면 포기.
 				float searchDistanceSqr = SearchDistance * SearchDistance;
 				if (distToTargetSqr > searchDistanceSqr)
 				{
 					_destPos = _initPos;
-					_target = null;
+					_target = null; // 다음 프레임에서 update 들어오면 Idle로 변경되게 됨
 					CreatureState = ECreatureState.Move;
 				}
 			}
@@ -153,9 +158,9 @@ public class Monster : Creature
 
 	protected override void UpdateSkill()
 	{
-		Debug.Log("Skill");
+		Debug.Log("<Color=red>Skill</color>");
 
-		if (_coWait != null)
+		if (_coWait != null) // 일정시간을 기다렸다가 Move로 돌아간다.
 			return;
 
 		CreatureState = ECreatureState.Move;
@@ -163,7 +168,7 @@ public class Monster : Creature
 
 	protected override void UpdateDead()
 	{
-		Debug.Log("Dead");
+		Debug.Log("<Color=red>Dead</color>");
 
 	}
 	#endregion

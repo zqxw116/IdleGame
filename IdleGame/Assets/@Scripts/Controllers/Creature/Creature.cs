@@ -92,7 +92,7 @@ public class Creature : BaseObject
 	#endregion
 
 	#region Wait
-	protected Coroutine _coWait;
+	protected Coroutine _coWait;	// 끝나면 코루틴을 null이 되기 때문에 null 체크만 하면 된다.
 
 	protected void StartWait(float seconds)
 	{
