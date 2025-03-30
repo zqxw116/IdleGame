@@ -16,62 +16,63 @@ public class DataTransformer : EditorWindow
 	[MenuItem("Tools/ParseExcel %#K")] // ctrl + shift + k
 	public static void ParseExcelDataToJson()
 	{
-		ParseExcelDataToJson<TestDataLoader, TestData>("Test");
+		ParseExcelDataToJson<CreatureDataLoader, CreatureData>("Creature");
+		ParseExcelDataToJson<EnvDataLoader, EnvData>("Env");
 		//LEGACY_ParseTestData("Test"); // 과거 노가다형식으로 데이터 파싱할 때
 
 		Debug.Log("DataTransformer Completed");
 	}
 
 	#region LEGACY
-	// LEGACY !
-	public static T ConvertValue<T>(string value)
-	{
-		if (string.IsNullOrEmpty(value))
-			return default(T);
+	//// LEGACY !
+	//public static T ConvertValue<T>(string value)
+	//{
+	//	if (string.IsNullOrEmpty(value))
+	//		return default(T);
 
-		TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-		return (T)converter.ConvertFromString(value);
-	}
+	//	TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+	//	return (T)converter.ConvertFromString(value);
+	//}
 
-	public static List<T> ConvertList<T>(string value)
-	{
-		if (string.IsNullOrEmpty(value))
-			return new List<T>();
+	//public static List<T> ConvertList<T>(string value)
+	//{
+	//	if (string.IsNullOrEmpty(value))
+	//		return new List<T>();
 
-		return value.Split('&').Select(x => ConvertValue<T>(x)).ToList();
-	}
+	//	return value.Split('&').Select(x => ConvertValue<T>(x)).ToList();
+	//}
 
-	static void LEGACY_ParseTestData(string filename)
-	{
-		TestDataLoader loader = new TestDataLoader();
+	//static void LEGACY_ParseTestData(string filename)
+	//{
+	//	TestDataLoader loader = new TestDataLoader();
 
-		string[] lines = File.ReadAllText($"{Application.dataPath}/@Resources/Data/ExcelData/{filename}Data.csv").Split("\n");
+	//	string[] lines = File.ReadAllText($"{Application.dataPath}/@Resources/Data/ExcelData/{filename}Data.csv").Split("\n");
 
-		for (int y = 1; y < lines.Length; y++)
-		{
-			string[] row = lines[y].Replace("\r", "").Split(',');
-			if (row.Length == 0)
-				continue;
-			if (string.IsNullOrEmpty(row[0]))
-				continue;
+	//	for (int y = 1; y < lines.Length; y++)
+	//	{
+	//		string[] row = lines[y].Replace("\r", "").Split(',');
+	//		if (row.Length == 0)
+	//			continue;
+	//		if (string.IsNullOrEmpty(row[0]))
+	//			continue;
 
-			// **노가다로 데이터 convert
-			int i = 0;
-			TestData testData = new TestData();
-			testData.Level = ConvertValue<int>(row[i++]);
-			testData.Exp = ConvertValue<int>(row[i++]);
-			testData.Skills = ConvertList<int>(row[i++]);
-			testData.Speed = ConvertValue<float>(row[i++]);
-			testData.Name = ConvertValue<string>(row[i++]);
-			//**
+	//		// **노가다로 데이터 convert
+	//		int i = 0;
+	//		TestData testData = new TestData();
+	//		testData.Level = ConvertValue<int>(row[i++]);
+	//		testData.Exp = ConvertValue<int>(row[i++]);
+	//		testData.Skills = ConvertList<int>(row[i++]);
+	//		testData.Speed = ConvertValue<float>(row[i++]);
+	//		testData.Name = ConvertValue<string>(row[i++]);
+	//		//**
 
-			loader.tests.Add(testData);
-		}
+	//		loader.tests.Add(testData);
+	//	}
 
-		string jsonStr = JsonConvert.SerializeObject(loader, Formatting.Indented); // 직렬화. 메모리상에 있는 것을 string으로 저장
-		File.WriteAllText($"{Application.dataPath}/@Resources/Data/JsonData/{filename}Data.json", jsonStr);
-		AssetDatabase.Refresh();
-	}
+	//	string jsonStr = JsonConvert.SerializeObject(loader, Formatting.Indented); // 직렬화. 메모리상에 있는 것을 string으로 저장
+	//	File.WriteAllText($"{Application.dataPath}/@Resources/Data/JsonData/{filename}Data.json", jsonStr);
+	//	AssetDatabase.Refresh();
+	//}
 	#endregion
 
 	#region Helpers

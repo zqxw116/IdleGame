@@ -1,7 +1,9 @@
+using Spine;
 using Spine.Unity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using static Define;
 
 public class BaseObject : InitBase
@@ -14,6 +16,8 @@ public class BaseObject : InitBase
 	// 아래와 같은 내용public float ColliderRadius { get { return Collider != null ? Collider.radius : 0.0f; } }
 	public float ColliderRadius { get { return Collider?.radius ?? 0.0f; } }
 	public Vector3 CenterPosition { get { return transform.position + Vector3.up * ColliderRadius; } }
+
+	public int DataTemplateID { get; set; } // 고유 ID
 
 	// 온라인 게임에서는 왼쪽 오른쪽을 알아야 상태설정을 할 수 있기 때문이다.
 	bool _lookLeft = true;
@@ -47,36 +51,66 @@ public class BaseObject : InitBase
 			LookLeft = true;
 		else if (dir.x > 0)
 			LookLeft = false;
-	}
+    }
+    #region Spine
+    protected virtual void SetSpineAnimation(string dataLabel, int sortingOrder)
+    {
+        if (SkeletonAnim == null)
+            return;
 
-	#region Spine
-	protected virtual void UpdateAnimation()
-	{
-	}
+        SkeletonAnim.skeletonDataAsset = Managers.Resource.Load<SkeletonDataAsset>(dataLabel);
+        SkeletonAnim.Initialize(true);
 
-	public void PlayAnimation(int trackIndex, string AnimName, bool loop)
-	{
-		if (SkeletonAnim == null)
-			return;
+        // Spine SkeletonAnimation은 SpriteRenderer 를 사용하지 않고 MeshRenderer을 사용함
+        // 그렇기떄문에 2D Sort Axis가 안먹히게 되는데 SortingGroup을 SpriteRenderer,MeshRenderer을 같이 계산함.
+        SortingGroup sg = Util.GetOrAddComponent<SortingGroup>(gameObject);
+        sg.sortingOrder = sortingOrder;
+    }
 
-		SkeletonAnim.AnimationState.SetAnimation(trackIndex, AnimName, loop);
-	}
+    protected virtual void UpdateAnimation()
+    {
+    }
 
-	public void AddAnimation(int trackIndex, string AnimName, bool loop, float delay)
-	{
-		if (SkeletonAnim == null)
-			return;
+    public void SetRigidBodyVelocity(Vector2 velocity)
+    {
+        if (RigidBody == null)
+            return;
 
-		SkeletonAnim.AnimationState.AddAnimation(trackIndex, AnimName, loop, delay);
-	}
+        RigidBody.velocity = velocity;
 
-	// true면 오른쪽을 보겠다
-	public void Flip(bool flag)
-	{
-		if (SkeletonAnim == null)
-			return;
+        if (velocity.x < 0)
+            LookLeft = true;
+        else if (velocity.x > 0)
+            LookLeft = false;
+    }
 
-		SkeletonAnim.Skeleton.ScaleX = flag ? -1 : 1;
-	}
-	#endregion
+    public void PlayAnimation(int trackIndex, string AnimName, bool loop)
+    {
+        if (SkeletonAnim == null)
+            return;
+
+        SkeletonAnim.AnimationState.SetAnimation(trackIndex, AnimName, loop);
+    }
+
+    public void AddAnimation(int trackIndex, string AnimName, bool loop, float delay)
+    {
+        if (SkeletonAnim == null)
+            return;
+
+        SkeletonAnim.AnimationState.AddAnimation(trackIndex, AnimName, loop, delay);
+    }
+
+    public void Flip(bool flag)
+    {
+        if (SkeletonAnim == null)
+            return;
+
+        SkeletonAnim.Skeleton.ScaleX = flag ? -1 : 1;
+    }
+
+    public virtual void OnAnimEventHandler(TrackEntry trackEntry, Spine.Event e)
+    {
+        Debug.Log("OnAnimEventHandler");
+    }
+    #endregion
 }

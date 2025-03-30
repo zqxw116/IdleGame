@@ -38,15 +38,20 @@ public class Monster : Creature
 			return false;
 
 		CreatureType = ECreatureType.Monster;
-		CreatureState = ECreatureState.Idle;
 		Speed = 3.0f;
 
 		StartCoroutine(CoUpdateAI());
 
 		return true;
 	}
+    public override void SetInfo(int templateID)
+    {
+        base.SetInfo(templateID);
 
-	void Start()
+        CreatureState = ECreatureState.Idle;
+    }
+
+    void Start()
 	{
 		_initPos = transform.position;
 	}
