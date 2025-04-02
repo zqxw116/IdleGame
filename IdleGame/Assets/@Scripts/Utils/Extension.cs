@@ -16,10 +16,24 @@ public static class Extension
 		UI_Base.BindEvent(go, action, type);
 	}
 
+	/// <summary>
+	/// 유효한지(활성화인지)
+	/// </summary>
 	public static bool IsValid(this GameObject go)
 	{
 		return go != null && go.activeSelf;
 	}
+
+	/// <summary>
+	/// 유효한지(활성화인지)
+	/// </summary>
+	public static bool IsValid(this BaseObject bo)
+	{
+		if (bo == null || bo.isActiveAndEnabled == false)
+            return false;
+
+        return true;
+    }
 
 	public static void DestroyChilds(this GameObject go)
 	{
@@ -27,12 +41,6 @@ public static class Extension
 			Managers.Resource.Destroy(child.gameObject);
 	}
 
-    public static void TranslateEx(this Transform transform, Vector3 dir)
-    {
-        BaseObject bo = transform.gameObject.GetComponent<BaseObject>();
-        if (bo != null)
-            bo.TranslateEx(dir);
-    }
 
     public static void Shuffle<T>(this IList<T> list)
 	{

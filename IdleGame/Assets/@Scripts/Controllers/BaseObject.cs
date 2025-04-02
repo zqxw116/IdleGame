@@ -13,8 +13,9 @@ public class BaseObject : InitBase
 	public SkeletonAnimation SkeletonAnim { get; private set; }
 	public Rigidbody2D RigidBody { get; private set; }
 
-	// 아래와 같은 내용public float ColliderRadius { get { return Collider != null ? Collider.radius : 0.0f; } }
-	public float ColliderRadius { get { return Collider?.radius ?? 0.0f; } }
+    public float ColliderRadius { get { return Collider != null ? Collider.radius : 0.0f; } }
+	// 아래와 같은 내용
+	//public float ColliderRadius { get { return Collider?.radius ?? 0.0f; } }
 	public Vector3 CenterPosition { get { return transform.position + Vector3.up * ColliderRadius; } }
 
 	public int DataTemplateID { get; set; } // 고유 ID
@@ -43,15 +44,17 @@ public class BaseObject : InitBase
 		return true;
 	}
 
-	public void TranslateEx(Vector3 dir)
-	{
-		transform.Translate(dir);
+    #region Battle
+    public virtual void OnDamaged(BaseObject attacker)
+    {
 
-		if (dir.x < 0)
-			LookLeft = true;
-		else if (dir.x > 0)
-			LookLeft = false;
     }
+
+    public virtual void OnDead(BaseObject attacker)
+    {
+
+    }
+    #endregion
     #region Spine
     protected virtual void SetSpineAnimation(string dataLabel, int sortingOrder)
     {
@@ -71,12 +74,13 @@ public class BaseObject : InitBase
     {
     }
 
+    // rigidbody는 transform 대신 velocity로 해야한다
     public void SetRigidBodyVelocity(Vector2 velocity)
     {
         if (RigidBody == null)
             return;
 
-        RigidBody.velocity = velocity;
+        RigidBody.velocity = velocity; // 가려는 방향에 크기를 넣어줘야 한다.
 
         if (velocity.x < 0)
             LookLeft = true;
@@ -108,6 +112,9 @@ public class BaseObject : InitBase
         SkeletonAnim.Skeleton.ScaleX = flag ? -1 : 1;
     }
 
+    /// <summary>
+    /// spine과 연관된 함수
+    /// </summary>
     public virtual void OnAnimEventHandler(TrackEntry trackEntry, Spine.Event e)
     {
         Debug.Log("OnAnimEventHandler");

@@ -62,10 +62,10 @@ public static class Define
     public enum EHeroMoveState
     {
         None,
-        TargetMonster,
-        CollectEnv,
-        ReturnToCamp,
-        ForceMove
+        TargetMonster,  // 몬스터 잡으러
+        CollectEnv,     // 채집하러
+        ReturnToCamp,   // 돌아오려고
+        ForceMove,      // 강제이동
     }
 
     public enum EEnvState

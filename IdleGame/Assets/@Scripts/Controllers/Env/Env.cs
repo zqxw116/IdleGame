@@ -65,32 +65,32 @@ public class Env : BaseObject
 		}
 	}
 
-	//public override void OnDamaged(BaseObject attacker)
-	//{
-	//	if (EnvState == EEnvState.Dead)
-	//		return;
+	public override void OnDamaged(BaseObject attacker)
+	{
+		if (EnvState == EEnvState.Dead)
+			return;
 
-	//	base.OnDamaged(attacker);
+		base.OnDamaged(attacker);
 
-	//	float finalDamage = 1;
-	//	EnvState = EEnvState.OnDamaged;
+		float finalDamage = 1;
+		EnvState = EEnvState.OnDamaged;
 
-	//	// TODO : Show UI
+		// TODO : Show UI
 
-	//	Hp = Mathf.Clamp(Hp - finalDamage, 0, MaxHp);
-	//	if (Hp <= 0)
-	//		OnDead(attacker);
-	//}
+		Hp = Mathf.Clamp(Hp - finalDamage, 0, MaxHp);
+		if (Hp <= 0)
+			OnDead(attacker);
+	}
 
-	//public override void OnDead(BaseObject attacker)
-	//{
-	//	base.OnDead(attacker);
+	public override void OnDead(BaseObject attacker)
+	{
+		base.OnDead(attacker);
 
-	//	EnvState = EEnvState.Dead;
+		EnvState = EEnvState.Dead;
 
-	//	// TODO : Drop Item	
+		// TODO : Drop Item	
 
-	//	Managers.Object.Despawn(this);
-	//}
+		Managers.Object.Despawn(this);
+	}
 
 }

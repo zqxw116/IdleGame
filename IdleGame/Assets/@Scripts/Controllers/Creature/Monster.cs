@@ -38,7 +38,6 @@ public class Monster : Creature
 			return false;
 
 		CreatureType = ECreatureType.Monster;
-		Speed = 3.0f;
 
 		StartCoroutine(CoUpdateAI());
 
@@ -116,19 +115,17 @@ public class Monster : Creature
 	// 이동, 순찰 다양한 이동 함축적
 	protected override void UpdateMove()
 	{
-		Debug.Log("<Color=red>Move</color>");
-
 		if (_target == null)
 		{
 			// Patrol or Return
 			Vector3 dir = (_destPos - transform.position);
-			float moveDist = Mathf.Min(dir.magnitude, Time.deltaTime * Speed);
-			transform.TranslateEx(dir.normalized * moveDist);
 
 			if (dir.sqrMagnitude <= 0.01f) // float 특성상 0이 아니다
 			{
 				CreatureState = ECreatureState.Idle;
+				return;
 			}
+			SetRigidBodyVelocity(dir.normalized * MoveSpeed) ;
 		}
 		else
 		{
@@ -145,12 +142,11 @@ public class Monster : Creature
 			}
 			else
 			{
-				// 공격 범위 밖이라면 추적.
-				float moveDist = Mathf.Min(dir.magnitude, Time.deltaTime * Speed); // 거리는 10인데 speed한 값이 20이면 초과해서 이동할테니 넘어가지 않게 최소값
-				transform.TranslateEx(dir.normalized * moveDist);
+                // 공격 범위 밖이라면 추적.
+                SetRigidBodyVelocity(dir.normalized * MoveSpeed);
 
-				// 너무 멀어지면 포기.
-				float searchDistanceSqr = SearchDistance * SearchDistance;
+                // 너무 멀어지면 포기.
+                float searchDistanceSqr = SearchDistance * SearchDistance;
 				if (distToTargetSqr > searchDistanceSqr)
 				{
 					_destPos = _initPos;

@@ -8,6 +8,7 @@ public class ObjectManager
 	public HashSet<Hero> Heroes { get; } = new HashSet<Hero>();
 	public HashSet<Monster> Monsters { get; } = new HashSet<Monster>();
 	public HashSet<Env> Envs { get; } = new HashSet<Env>();
+	public HeroCamp Camp{ get; private set; }
 
 	#region Roots
 	public Transform GetRootTransform(string name)
@@ -80,8 +81,12 @@ public class ObjectManager
 
             env.SetInfo(templateID);
         }
+        else if (obj.ObjectType == EObjectType.HeroCamp)
+        {
+			Camp = go.GetComponent<HeroCamp>();
+        }
 
-		return obj as T; // obj만 반환하면 에러가 생김. 제네릭이 아니기 때문
+        return obj as T; // obj만 반환하면 에러가 생김. 제네릭이 아니기 때문
     }
 
 	public void Despawn<T>(T obj) where T : BaseObject
@@ -113,7 +118,10 @@ public class ObjectManager
             Env env = obj.GetComponent<Env>();
 			Envs.Remove(env);
         }
-
-		Managers.Resource.Destroy(obj.gameObject);
+        else if (obj.ObjectType == EObjectType.HeroCamp)
+        {
+            Camp = null;
+        }
+        Managers.Resource.Destroy(obj.gameObject);
 	}
 }
