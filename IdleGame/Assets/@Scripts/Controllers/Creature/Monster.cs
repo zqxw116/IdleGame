@@ -56,16 +56,11 @@ public class Monster : Creature
 	}
 
 	#region AI
-	public float SearchDistance { get; private set; } = 8.0f;
-	public float AttackDistance { get; private set; } = 4.0f;
-	Creature _target;
 	Vector3 _destPos; // 도착할 위치
 	Vector3 _initPos; // Init에 넣으면 awake에 호출돼서 위치값이 안맞을 수 있다. start에 적용
 
 	protected override void UpdateIdle()
 	{
-		Debug.Log("<Color=red>Idle</color>");
-
 		// Patrol(순찰)
 		{
 			int patrolPercent = 10;
@@ -80,34 +75,12 @@ public class Monster : Creature
 
 		// Search Player(플레이어 찾기)
 		{
-			Creature target = null;
-			float bestDistanceSqr = float.MaxValue;// 처음에는 큰값
-			float searchDistanceSqr = SearchDistance * SearchDistance; // 거리의 제곱을 비교. 루트를 사용하는 것 보다 효율성이 더 좋기 때문. 
-
-			// 너무 최적화를 신경쓰기에는 클라에서 수백개의 오브젝트는 괜찮다.   코드 진행하는 것이 중요.
-			foreach (Hero hero in Managers.Object.Heroes) // 유닛을 다 돌아본다.
+			Creature creature = FindClosestInRange(MONSTER_SEARCH_DISTANCE, Managers.Object.Heroes, func: IsValid) as Creature;
+			if (creature != null)
 			{
-				Vector3 dir = hero.transform.position - transform.position;
-				float distToTargetSqr = dir.sqrMagnitude; // 루트를 사용하지 않는다.
-
-				Debug.Log(distToTargetSqr);
-
-				if (distToTargetSqr > searchDistanceSqr) // 검색범위를 넘었으면 패스
-					continue;
-
-				if (distToTargetSqr > bestDistanceSqr)   // 이미 나보다 가까우면 패스
-					continue;
-
-				target = hero;
-				bestDistanceSqr = distToTargetSqr;
-			}
-
-			_target = target; // 가장 가까운 것 찾음!
-
-			if (_target != null)
-			{
-				CreatureState = ECreatureState.Move;				
-				// ?~~
+				Target = creature;
+				CreatureState = ECreatureState.Move;
+				return;
 			}
 		}
 	}
@@ -115,7 +88,7 @@ public class Monster : Creature
 	// 이동, 순찰 다양한 이동 함축적
 	protected override void UpdateMove()
 	{
-		if (_target == null)
+		if (Target == null)
 		{
 			// Patrol or Return
 			Vector3 dir = (_destPos - transform.position);
@@ -130,29 +103,14 @@ public class Monster : Creature
 		else
 		{
 			// Chase
-			Vector3 dir = (_target.transform.position - transform.position);
-			float distToTargetSqr = dir.sqrMagnitude;
-			float attackDistanceSqr = AttackDistance * AttackDistance;
+			ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, 5.0f);
 
-			if (distToTargetSqr < attackDistanceSqr)
+			// 너무 멀어지면 포기
+			if (Target.IsValid() == false)
 			{
-				// 공격 범위 이내로 들어왔으면 공격.
-				CreatureState = ECreatureState.Skill;
-				StartWait(2.0f);
-			}
-			else
-			{
-                // 공격 범위 밖이라면 추적.
-                SetRigidBodyVelocity(dir.normalized * MoveSpeed);
-
-                // 너무 멀어지면 포기.
-                float searchDistanceSqr = SearchDistance * SearchDistance;
-				if (distToTargetSqr > searchDistanceSqr)
-				{
-					_destPos = _initPos;
-					_target = null; // 다음 프레임에서 update 들어오면 Idle로 변경되게 됨
-					CreatureState = ECreatureState.Move;
-				}
+				Target = null;
+				_destPos = _initPos;
+				return;
 			}
 		}
 	}

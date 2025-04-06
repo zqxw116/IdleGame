@@ -16,7 +16,9 @@ public class DataTransformer : EditorWindow
 	[MenuItem("Tools/ParseExcel %#K")] // ctrl + shift + k
 	public static void ParseExcelDataToJson()
 	{
-		ParseExcelDataToJson<CreatureDataLoader, CreatureData>("Creature");
+		ParseExcelDataToJson<MonsterDataLoader, MonsterData>("Monster");
+		ParseExcelDataToJson<HeroDataLoader, HeroData>("Hero");
+		ParseExcelDataToJson<SkillDataLoader, SkillData>("Skill");
 		ParseExcelDataToJson<EnvDataLoader, EnvData>("Env");
 		//LEGACY_ParseTestData("Test"); // 과거 노가다형식으로 데이터 파싱할 때
 

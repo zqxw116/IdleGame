@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class Managers : MonoBehaviour
 {
+    public static bool Initialized { get; set; } = false; // 한번 더 체크
     private static Managers s_instance;
     private static Managers Instance { get { Init(); return s_instance; } }
 
@@ -36,8 +37,9 @@ public class Managers : MonoBehaviour
 
     public static void Init()
     {
-        if (s_instance == null)
+        if (s_instance == null && Initialized == false)
         {
+            Initialized = true;
             GameObject go = GameObject.Find("@Managers");
             if (go == null)
             {
