@@ -20,7 +20,7 @@ public class GameScene : BaseScene
 		camp.SetCellPos(new Vector3Int(0,0,0), true);
 
 
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 1; i++)
 		{
 			//int heroID = HERO_WIZARD_ID + Random.Range(0, 5);
 			//int heroID = HERO_KNIGHT_ID;

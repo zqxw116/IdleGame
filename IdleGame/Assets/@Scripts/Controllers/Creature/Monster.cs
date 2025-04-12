@@ -103,7 +103,7 @@ public class Monster : Creature
 				CreatureState = ECreatureState.Idle;
 				return;
 			}
-			SetRigidBodyVelocity(dir.normalized * MoveSpeed) ;
+			//SetRigidBodyVelocity(dir.normalized * MoveSpeed) ;
 		}
 		else
 		{
@@ -124,7 +124,7 @@ public class Monster : Creature
 
 	protected override void UpdateSkill()
 	{
-		Debug.Log("<Color=red>Skill</color>");
+		Debug.Log($"<Color=red>[Skill]</color> {this.name}");
 
         if (Target.IsValid() == false)
         {
@@ -139,9 +139,9 @@ public class Monster : Creature
 
 	protected override void UpdateDead()
 	{
-		Debug.Log("<Color=red>Dead</color>");
+		Debug.Log($"<Color=red>[Dead]</color> {this.name}");
 
-		SetRigidBodyVelocity(Vector2.zero);
+		//SetRigidBodyVelocity(Vector2.zero);
 	}
 	#endregion
 

@@ -84,19 +84,7 @@ public class BaseObject : InitBase
     {
     }
 
-    // rigidbody는 transform 대신 velocity로 해야한다
-    public void SetRigidBodyVelocity(Vector2 velocity)
-    {
-        if (RigidBody == null)
-            return;
 
-        RigidBody.velocity = velocity; // 가려는 방향에 크기를 넣어줘야 한다.
-
-        if (velocity.x < 0)
-            LookLeft = true;
-        else if (velocity.x > 0)
-            LookLeft = false;
-    }
 
     public void PlayAnimation(int trackIndex, string AnimName, bool loop)
     {
@@ -133,6 +121,7 @@ public class BaseObject : InitBase
 
     #region Map
     // 일정하지 않는 곳에서 스르륵 오게 해주는 것
+    // 셀 위치로 도착하면 true로 켜진다.
     public bool LerpCellPosCompleted { get; protected set; }
 
     Vector3Int _cellPos;
@@ -158,9 +147,12 @@ public class BaseObject : InitBase
         }
     }
 
+    /// <summary>
+    /// 매 프레임마다 스르륵 이동할지 체크
+    /// </summary>
     public void LerpToCellPos(float moveSpeed)
     {
-        if (LerpCellPosCompleted)
+        if (LerpCellPosCompleted)   // 도착했으면 하지 않음.
             return;
 
         Vector3 destPos = Managers.Map.Cell2World(CellPos);
@@ -178,6 +170,7 @@ public class BaseObject : InitBase
             return;
         }
 
+        // 실제 이동.
         float moveDist = Mathf.Min(dir.magnitude, moveSpeed * Time.deltaTime);
         transform.position += dir.normalized * moveDist;
     }

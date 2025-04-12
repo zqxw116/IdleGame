@@ -5,20 +5,7 @@ using static Define;
 
 public class Hero : Creature
 {
-    bool _needArrange = true;
-    public bool NeedArrange // 완전히 멈춰있는지 아닌지에 따라서 설정.
-    {
-        get { return _needArrange; }
-        set
-        {
-            _needArrange = value;
-
-            if (value)// 움직이는 상태면 사이즈 크게 적용
-                ChangeColliderSize(EColliderSize.Big);
-            else //멈췄으면 콜라이더 사이즈 재설정
-                TryResizeCollider();
-        }
-    }
+    public bool NeedArrange { get; set; }
 
     public override ECreatureState CreatureState
     {
@@ -28,23 +15,6 @@ public class Hero : Creature
             if (_creatureState != value)
             {
                 base.CreatureState = value;
-
-                switch (value)
-                {
-                    case ECreatureState.None:
-                        RigidBody.mass = CreatureData.Mass * 5.0f;
-                        break;
-                    case ECreatureState.Idle:
-                        RigidBody.mass = CreatureData.Mass * 500.0f;
-                        break;
-                    case ECreatureState.Move:
-                        RigidBody.mass = CreatureData.Mass;
-                        break;
-                }
-                if (value == ECreatureState.Move) // 뒤에 있는 애들은 밀치면서 안으로 들어오게 하려고 무게 가볍게 설정
-                    RigidBody.mass = CreatureData.Mass;
-                else
-                    RigidBody.mass = CreatureData.Mass * 0.1f;
             }
         }
     }
@@ -83,6 +53,11 @@ public class Hero : Creature
 		Managers.Game.OnJoystickStateChanged -= HandleOnJoystickStateChanged;
 		Managers.Game.OnJoystickStateChanged += HandleOnJoystickStateChanged;
 
+        // Map
+        Collider.isTrigger = true;
+        RigidBody.simulated = false;
+
+
 		StartCoroutine(CoUpdateAI());
 
 		return true;
@@ -99,6 +74,9 @@ public class Hero : Creature
         Skills.SetInfo(this, CreatureData.SkillIdList);
     }
 
+    /// <summary>
+    /// 히어로 도착지점
+    /// </summary>
     public Transform HeroCampDest
     {
         get
@@ -113,8 +91,6 @@ public class Hero : Creature
     #region AI
     protected override void UpdateIdle()
     {
-        SetRigidBodyVelocity(Vector2.zero);// 임시코드
-
         // 0. 이동 상태라면 강제 변경
         if (HeroMoveState == EHeroMoveState.ForceMove)
         {
@@ -158,8 +134,7 @@ public class Hero : Creature
         // 0. 누르고 있다면, 강제 이동
         if (HeroMoveState == EHeroMoveState.ForceMove)
         {
-            Vector3 dir = HeroCampDest.position - transform.position;
-            SetRigidBodyVelocity(dir.normalized * MoveSpeed); // 방향 x 이동크기(속도)
+            EFindPathResult result = FindPathAndMoveToCellPos(HeroCampDest.position, HERO_DEFAULT_MOVE_DEPTH); 
             return;
         }
 
@@ -210,32 +185,40 @@ public class Hero : Creature
         // 3. Camp 주변으로 모이기
         if (HeroMoveState == EHeroMoveState.ReturnToCamp)
         {
-            Vector3 dir = HeroCampDest.position - transform.position;
-            float stopDistanceSqr = HERO_DEFAULT_STOP_RANGE * HERO_DEFAULT_STOP_RANGE;
-            if (dir.sqrMagnitude <= stopDistanceSqr)
-            {
-                HeroMoveState = EHeroMoveState.None;
-                CreatureState = ECreatureState.Idle;
-                NeedArrange = false;
+            Vector3 destPos = HeroCampDest.position;
+            if (FindPathAndMoveToCellPos(HeroCampDest.position, HERO_DEFAULT_MOVE_DEPTH) == EFindPathResult.Success)
                 return;
-            }
-            else
+
+            // 실패 사유 검사.
+            BaseObject obj = Managers.Map.GetObject(destPos);
+            if (obj.IsValid())
             {
-                // 멀리 있을 수록 빨라짐
-                float ratio = Mathf.Min(1, dir.magnitude); // TEMP
-                float moveSpeed = MoveSpeed * (float)Math.Pow(ratio, 3); // 3제곱
-                SetRigidBodyVelocity(dir.normalized * moveSpeed);
-                return;
+                // 내가 그 자리를 차지하고 있다면
+                if (obj == this)
+                {
+                    HeroMoveState = EHeroMoveState.None;
+                    NeedArrange = false;
+                    return;
+                }
+
+                // 다른 영웅이 멈춰있다면.
+                Hero hero = obj as Hero;
+                if (hero != null && hero.CreatureState == ECreatureState.Idle)
+                {
+                    HeroMoveState = EHeroMoveState.None;
+                    NeedArrange = false;
+                    return;
+                }
             }
         }
 
         //// 4. 기타 (누르다 뗐을 때)
-        CreatureState = ECreatureState.Idle;
+        if (LerpCellPosCompleted) // Lerp 중일 수 있기 때문
+            CreatureState = ECreatureState.Idle;
     }
 
     protected override void UpdateSkill()
     {
-        SetRigidBodyVelocity(Vector2.zero);
         if (HeroMoveState == EHeroMoveState.ForceMove) // 당장 돌아오세요 용사여!!
         {
             CreatureState = ECreatureState.Move;
@@ -255,26 +238,6 @@ public class Hero : Creature
     
     #endregion
 
-
-    private void TryResizeCollider()
-    {
-        // 일단 충돌체 아주 작게.
-        ChangeColliderSize(EColliderSize.Small);
-
-        foreach (var hero in Managers.Object.Heroes)
-        {
-            if (hero.HeroMoveState == EHeroMoveState.ReturnToCamp)
-                return;
-        }
-
-        // ReturnToCamp가 한 명도 없으면 콜라이더 조정.
-        foreach (var hero in Managers.Object.Heroes)
-        {
-            // 단 채집이나 전투중이면 스킵.
-            if (hero.CreatureState == ECreatureState.Idle)
-                hero.ChangeColliderSize(EColliderSize.Big);
-        }
-    }
 
 
     private void HandleOnJoystickStateChanged(EJoystickState joystickState)
