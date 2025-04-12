@@ -66,6 +66,7 @@ public static class Define
         CollectEnv,     // 채집하러
         ReturnToCamp,   // 돌아오려고
         ForceMove,      // 강제이동
+        ForcePath,      // 전체 길이를 찾는 상황
     }
 
     public enum EEnvState
@@ -99,9 +100,9 @@ public static class Define
 
     public enum EFindPathResult
     {
-        Fail_LerpCell,
-        Fail_NoPath,
-        Fail_MoveTo,
+        Fail_LerpCell, // Lerp 처리중
+        Fail_NoPath,   // 길을 못찾았다
+        Fail_MoveTo,   // 안걸려야 정상?
         Success,
     }
 

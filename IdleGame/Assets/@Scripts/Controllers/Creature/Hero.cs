@@ -1,5 +1,6 @@
 using Spine;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static Define;
 
@@ -131,6 +132,17 @@ public class Hero : Creature
 
     protected override void UpdateMove()
     {
+        // 강제 경로로 이동
+        if (HeroMoveState == EHeroMoveState.ForcePath)
+        {
+            MoveByForcePath();
+            return;
+        }
+
+        // 이동 할 수 있는지 먼저 체크
+        if (CheckHeroCampDistanceAndForcePath())
+            return;
+
         // 0. 누르고 있다면, 강제 이동
         if (HeroMoveState == EHeroMoveState.ForceMove)
         {
@@ -212,9 +224,64 @@ public class Hero : Creature
             }
         }
 
-        //// 4. 기타 (누르다 뗐을 때)
+        // 4. 기타 (누르다 뗐을 때)
         if (LerpCellPosCompleted) // Lerp 중일 수 있기 때문
             CreatureState = ECreatureState.Idle;
+    }
+
+
+    Queue<Vector3Int> _forcePath = new Queue<Vector3Int>();
+
+    bool CheckHeroCampDistanceAndForcePath()
+    {
+        // 너무 멀어서 못 간다.
+        Vector3 destPos = HeroCampDest.position;
+        Vector3Int destCellPos = Managers.Map.World2Cell(destPos);
+        if ((CellPos - destCellPos).magnitude <= 10) // 10칸 이하면 문제 없다
+            return false;
+
+        if (Managers.Map.CanGo(destCellPos, ignoreObjects: true) == false) // 갈 수 없는데 전체 스캔을 하면 문제
+            return false;
+
+        List<Vector3Int> path = Managers.Map.FindPath(CellPos, destCellPos, 100);
+        if (path.Count < 2)
+            return false;
+
+        HeroMoveState = EHeroMoveState.ForcePath;
+
+        _forcePath.Clear();
+        foreach (var p in path)
+        {
+            _forcePath.Enqueue(p);
+        }
+        _forcePath.Dequeue();
+
+        return true;
+    }
+
+    void MoveByForcePath()
+    {
+        if (_forcePath.Count == 0) // 찾을 경로를 다 썼으면
+        {
+            HeroMoveState = EHeroMoveState.None;
+            return;
+        }
+
+        Vector3Int cellPos = _forcePath.Peek();
+
+        if (MoveToCellPos(cellPos, 2)) // 나랑 나 다음
+        {
+            _forcePath.Dequeue();
+            return;
+        }
+
+        // 실패 사유가 영웅이라면.
+        Hero hero = Managers.Map.GetObject(cellPos) as Hero;
+        if (hero != null && hero.CreatureState == ECreatureState.Idle)
+        {
+            HeroMoveState = EHeroMoveState.None;
+            return;
+        }
     }
 
     protected override void UpdateSkill()

@@ -20,11 +20,11 @@ public class GameScene : BaseScene
 		camp.SetCellPos(new Vector3Int(0,0,0), true);
 
 
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < 10; i++)
 		{
-			//int heroID = HERO_WIZARD_ID + Random.Range(0, 5);
+			int heroID = HERO_WIZARD_ID + Random.Range(0, 5);
 			//int heroID = HERO_KNIGHT_ID;
-			int heroID = HERO_WIZARD_ID;
+			//int heroID = HERO_WIZARD_ID;
 			Vector3Int randCellPos = new Vector3Int(0 + Random.Range(-3, 3), 0 + Random.Range(-3, 3), 0);
 			if (Managers.Map.CanGo(randCellPos) == false)
 				continue;
@@ -38,17 +38,19 @@ public class GameScene : BaseScene
 
 		Managers.UI.ShowBaseUI<UI_Joystick>();
 
-		{ 
+        {
+			Monster monster = Managers.Object.Spawn<Monster>(new Vector3(1,1,0), MONSTER_SLIME_ID);
+			Managers.Map.MoveTo(monster, new Vector3Int(0, 4, 0), true);
+			Managers.Object.Spawn<Monster>(new Vector3Int(1, 1, 0), MONSTER_GOBLIN_ARCHER_ID);
 			//Managers.Object.Spawn<Monster>(new Vector3Int(0, 1, 0), MONSTER_BEAR_ID);
-			//Managers.Object.Spawn<Monster>(new Vector3Int(1, 1, 0), MONSTER_SLIME_ID);
-   //         Managers.Object.Spawn<Monster>(new Vector3Int(2, 1, 0), MONSTER_GOBLIN_ARCHER_ID);
+   //         Managers.Object.Spawn<Monster>(new Vector3Int(1, 1, 0), MONSTER_SLIME_ID);
    //         Managers.Object.Spawn<Monster>(new Vector3Int(3, 1, 0), MONSTER_GOBLIN_ARCHER_ID);
         }
-		
-		{ 
-			//Env env = Managers.Object.Spawn<Env>(new Vector3Int(0, 1, 0), ENV_TREE1_ID);
-			//env.EnvState = EEnvState.Idle;
-		}
+
+        {
+            //Env env = Managers.Object.Spawn<Env>(new Vector3Int(0, 1, 0), ENV_TREE1_ID);
+            //env.EnvState = EEnvState.Idle;
+        }
 
         // TODO
 

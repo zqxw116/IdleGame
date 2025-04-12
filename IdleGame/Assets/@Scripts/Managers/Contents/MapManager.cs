@@ -250,131 +250,142 @@ public class MapManager
 	#endregion
 
 	#region A* PathFinding
+	/// <summary>
+	/// 한 칸의 개념
+	/// </summary>
 	public struct PQNode : IComparable<PQNode>
 	{
-		public int H; // Heuristic
-		public Vector3Int CellPos;
-		public int Depth;
+		public int H; // Heuristic	 	// 최종점수  H 값이 작을수록 좋은 후보
+		public Vector3Int CellPos;		// 현재 위치
+		public int Depth;               // 시작점에서 현재 셀까지 이동한 횟수
 
 		public int CompareTo(PQNode other)
 		{
 			if (H == other.H)
 				return 0;
-			return H < other.H ? 1 : -1;
+			return H < other.H ? 1 : -1;    // 더 낮은 휴리스틱 값을 가진 노드가 우선순위가 높다
 		}
 	}
 
 	List<Vector3Int> _delta = new List<Vector3Int>()
 	{
-		new Vector3Int(0, 1, 0), // U
-		new Vector3Int(1, 1, 0), // UR
-		new Vector3Int(1, 0, 0), // R
-		new Vector3Int(1, -1, 0), // DR
-		new Vector3Int(0, -1, 0), // D
-		new Vector3Int(-1, -1, 0), // LD
-		new Vector3Int(-1, 0, 0), // L
-		new Vector3Int(-1, 1, 0), // LU
+		new Vector3Int(0, 1, 0),    // U: 위쪽 (상)
+		new Vector3Int(1, 1, 0),    // UR: 우상단
+		new Vector3Int(1, 0, 0),    // R: 우측
+		new Vector3Int(1, -1, 0),   // DR: 우하단
+		new Vector3Int(0, -1, 0),   // D: 하단 (아래)
+		new Vector3Int(-1, -1, 0),  // LD: 좌하단
+		new Vector3Int(-1, 0, 0),   // L: 좌측
+		new Vector3Int(-1, 1, 0),   // LU: 좌상단
 	};
 
-	//public List<Vector3Int> FindPath(Vector3Int startCellPos, Vector3Int destCellPos, int maxDepth = 10)
-	//{
-	//	// 지금까지 제일 좋은 후보 기록.
-	//	Dictionary<Vector3Int, int> best = new Dictionary<Vector3Int, int>();
-	//	// 경로 추적 용도.
-	//	Dictionary<Vector3Int, Vector3Int> parent = new Dictionary<Vector3Int, Vector3Int>();
+    public List<Vector3Int> FindPath(Vector3Int startCellPos, Vector3Int destCellPos, int maxDepth = 10)
+    {
+        Dictionary<Vector3Int, int> best = new Dictionary<Vector3Int, int>(); // 각 셀에 대해 지금까지 발견한 최소 휴리스틱(예상 비용)을 저장하는 Dictionary.
+		Dictionary<Vector3Int, Vector3Int> parent = new Dictionary<Vector3Int, Vector3Int>(); // 경로 추적을 위해, 각 셀이 이전에 어디에서 왔는지 기록하는 Dictionary.
 
-	//	// 현재 발견된 후보 중에서 가장 좋은 후보를 빠르게 뽑아오기 위한 도구.
-	//	PriorityQueue<PQNode> pq = new PriorityQueue<PQNode>(); // OpenList
+		// 현재 발견된 후보 중에서 가장 좋은 후보를 빠르게 뽑아오기 위한 도구.
+		PriorityQueue<PQNode> pq = new PriorityQueue<PQNode>(); // OpenList
 
-	//	Vector3Int pos = startCellPos;
-	//	Vector3Int dest = destCellPos;
+        Vector3Int pos = startCellPos;
+        Vector3Int dest = destCellPos;
 
-	//	// destCellPos에 도착 못하더라도 제일 가까운 애로.
-	//	Vector3Int closestCellPos = startCellPos;
-	//	int closestH = (dest - pos).sqrMagnitude;
+        // destCellPos에 도착 못하더라도 제일 가까운 애로.
+        Vector3Int closestCellPos = startCellPos;
+        int closestH = (dest - pos).sqrMagnitude;
 
-	//	// 시작점 발견 (예약 진행)
-	//	{
-	//		int h = (dest - pos).sqrMagnitude;
-	//		pq.Push(new PQNode() { H = h, CellPos = pos, Depth = 1 });
-	//		parent[pos] = pos;
-	//		best[pos] = h;
-	//	}
+        // 시작점 발견 (예약 진행)
+        {
+            int h = (dest - pos).sqrMagnitude; // 거리계산 제곱으로 최적화
+            pq.Push(new PQNode() { H = h, CellPos = pos, Depth = 1 }); // 첫 설정
+            parent[pos] = pos;
+            best[pos] = h;
+        }
 
-	//	while (pq.Count > 0)
-	//	{
-	//		// 제일 좋은 후보를 찾는다
-	//		PQNode node = pq.Pop();
-	//		pos = node.CellPos;
+        while (pq.Count > 0)
+        {
+			// 우선순위 큐에서 가장 좋은 (휴리스틱이 낮은) 후보를 꺼낸다.
+			PQNode node = pq.Pop();
+            pos = node.CellPos;
 
-	//		// 목적지 도착했으면 바로 종료.
-	//		if (pos == dest)
-	//			break;
+            // 목적지 도착했으면 바로 종료.
+            if (pos == dest)
+                break;
 
-	//		// 무한으로 깊이 들어가진 않음.
-	//		if (node.Depth >= maxDepth)
-	//			break;
+			// 탐색 깊이가 maxDepth 이상이면 탐색 중지
+			if (node.Depth >= maxDepth)
+                break;
 
-	//		// 상하좌우 등 이동할 수 있는 좌표인지 확인해서 예약한다.
-	//		foreach (Vector3Int delta in _delta)
-	//		{
-	//			Vector3Int next = pos + delta;
+            // 상하좌우 등 이동할 수 있는 좌표인지 확인해서 예약한다.
+            foreach (Vector3Int delta in _delta)
+            {
+                Vector3Int next = pos + delta;
 
-	//			// 갈 수 없는 장소면 스킵.
-	//			if (CanGo(next) == false)
-	//				continue;
+                // 갈 수 없는 장소면 스킵.
+                if (CanGo(next) == false)
+                    continue;
 
-	//			// 예약 진행
-	//			int h = (dest - next).sqrMagnitude;
+                // 예약 진행
+                int h = (dest - next).sqrMagnitude;
 
-	//			// 더 좋은 후보 찾았는지
-	//			if (best.ContainsKey(next) == false)
-	//				best[next] = int.MaxValue;
+				// 우선순위 큐에서 가장 좋은 (휴리스틱이 낮은) 후보를 꺼낸다.
+				if (best.ContainsKey(next) == false)
+                    best[next] = int.MaxValue;
 
-	//			if (best[next] <= h)
-	//				continue;
+				// 만약 이전 기록된 최적값보다 나쁘거나 같은 경우, 무시
+				if (best[next] <= h)
+                    continue;
 
-	//			best[next] = h;
+                best[next] = h;
 
-	//			pq.Push(new PQNode() { H = h, CellPos = next, Depth = node.Depth + 1 });
-	//			parent[next] = pos;
+				// 다음 셀 정보를 우선순위 큐에 등록 (Depth 증가)
+				pq.Push(new PQNode() { H = h, CellPos = next, Depth = node.Depth + 1 });
+				// 경로 추적을 위해 부모 정보를 등록
+				parent[next] = pos;
 
-	//			// 목적지까지는 못 가더라도, 그나마 제일 좋았던 후보 기억.
-	//			if (closestH > h)
-	//			{
-	//				closestH = h;
-	//				closestCellPos = next;
-	//			}
-	//		}
-	//	}
+                // 목적지까지는 못 가더라도, 그나마 제일 좋았던 후보 기억.
+                if (closestH > h)
+                {
+                    closestH = h;
+                    closestCellPos = next;
+                }
+            }
+        }
 
-	//	// 제일 가까운 애라도 찾음.
-	//	if (parent.ContainsKey(dest) == false)
-	//		return CalcCellPathFromParent(parent, closestCellPos);
+        // 제일 가까운 애라도 찾음.
+        if (parent.ContainsKey(dest) == false)
+            return CalcCellPathFromParent(parent, closestCellPos);
 
-	//	return CalcCellPathFromParent(parent, dest);
-	//}
+        return CalcCellPathFromParent(parent, dest);
+    }
 
-	//List<Vector3Int> CalcCellPathFromParent(Dictionary<Vector3Int, Vector3Int> parent, Vector3Int dest)
-	//{
-	//	List<Vector3Int> cells = new List<Vector3Int>();
+	/// <summary>
+	/// Parent 추적해서 길 만듬
+	/// </summary>
+    List<Vector3Int> CalcCellPathFromParent(Dictionary<Vector3Int, Vector3Int> parent, Vector3Int dest)
+    {
+        List<Vector3Int> cells = new List<Vector3Int>();
 
-	//	if (parent.ContainsKey(dest) == false)
-	//		return cells;
+		// 만약 목적지 셀(dest)이 parent Dictionary에 등록되어 있지 않으면(즉, 경로를 찾지 못한 경우), 비어있는 리스트를 즉시 반환합니다.
+		if (parent.ContainsKey(dest) == false)
+            return cells;
 
-	//	Vector3Int now = dest;
+		// 역추적
+		Vector3Int now = dest;
 
-	//	while (parent[now] != now)
-	//	{
-	//		cells.Add(now);
-	//		now = parent[now];
-	//	}
+		// dest(목적지)로부터 시작하여, parent[now]를 따라가며 경로 상의 모든 셀을 리스트에 저장합니다.
+		while (parent[now] != now)
+        {
+            cells.Add(now);
+            now = parent[now];
+        }
 
-	//	cells.Add(now);
-	//	cells.Reverse();
+		// 최종적으로 리스트를 뒤집어 시작점부터 목적지 순으로 정렬하여 반환합니다.
+		cells.Add(now);
+        cells.Reverse();
 
-	//	return cells;
-	//}
+        return cells;
+    }
 
-	#endregion
+    #endregion
 }

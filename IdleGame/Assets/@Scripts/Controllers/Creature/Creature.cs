@@ -277,7 +277,7 @@ public class Creature : BaseObject
 	#endregion
 
 
-	#region Map
+	#region Map, A*
 	/// <summary>
 	/// 이전에 velocity로 이동하는 부분을 대체하는 함수
 	/// </summary>
@@ -292,21 +292,20 @@ public class Creature : BaseObject
 		if (LerpCellPosCompleted == false)
 			return EFindPathResult.Fail_LerpCell;
 
-		//// A*
-		//List<Vector3Int> path = Managers.Map.FindPath(CellPos, destCellPos, maxDepth);
-		//if (path.Count < 2)
-		//	return EFindPathResult.Fail_NoPath;
+        // A* 길찾기
+        List<Vector3Int> path = Managers.Map.FindPath(CellPos, destCellPos, maxDepth);
+        if (path.Count < 2)
+            return EFindPathResult.Fail_NoPath;
 
-		//if (forceMoveCloser)
-		//{
-		//	Vector3Int diff1 = CellPos - destCellPos;
-		//	Vector3Int diff2 = path[1] - destCellPos;
-		//	if (diff1.sqrMagnitude <= diff2.sqrMagnitude)
-		//		return EFindPathResult.Fail_NoPath;
-		//}
+        if (forceMoveCloser) // 주변에 막고 있는게 많아서 특정 부분에서 와리가리 하는 상황이 생길 때가 있다.
+        {
+            Vector3Int diff1 = CellPos - destCellPos;
+            Vector3Int diff2 = path[1] - destCellPos;
+            if (diff1.sqrMagnitude <= diff2.sqrMagnitude)
+                return EFindPathResult.Fail_NoPath;
+        }
 
-		//Vector3Int dirCellPos = path[1] - CellPos;	// 추후 한칸씩 이동하게?
-		Vector3Int dirCellPos = destCellPos - CellPos; // 임시로 일단 그 위치로 가게 하려고 하는 함수
+        Vector3Int dirCellPos = path[1] - CellPos;	// 추후 한칸씩 이동하게?
 		Vector3Int nextPos = CellPos + dirCellPos;
 
 		if (Managers.Map.MoveTo(this, nextPos) == false)
