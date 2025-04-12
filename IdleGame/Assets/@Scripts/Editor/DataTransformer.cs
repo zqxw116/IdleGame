@@ -20,6 +20,7 @@ public class DataTransformer : EditorWindow
 		ParseExcelDataToJson<HeroDataLoader, HeroData>("Hero");
 		ParseExcelDataToJson<SkillDataLoader, SkillData>("Skill");
 		ParseExcelDataToJson<EnvDataLoader, EnvData>("Env");
+		ParseExcelDataToJson<ProjectileDataLoader, ProjectileData>("Projectile");
 		//LEGACY_ParseTestData("Test"); // 과거 노가다형식으로 데이터 파싱할 때
 
 		Debug.Log("DataTransformer Completed");
@@ -104,10 +105,9 @@ public class DataTransformer : EditorWindow
 				continue;
 
 			LoaderData loaderData = new LoaderData();
+			var fields = GetFieldsInBase(typeof(LoaderData));  // LoaderData 클래스의 모든 필드 목록을 가져옴
 
-			System.Reflection.FieldInfo[] fields = typeof(LoaderData).GetFields();  // LoaderData 클래스의 모든 필드 목록을 가져옴
-
-            for (int f = 0; f < fields.Length; f++)
+            for (int f = 0; f < fields.Count; f++)
 			{
 				FieldInfo field = loaderData.GetType().GetField(fields[f].Name); // LoaderData의 필드를 하나씩 가져와서 처리
                 Type type = field.FieldType;
@@ -156,6 +156,41 @@ public class DataTransformer : EditorWindow
 			genericList.Add(item);
 
 		return genericList;
+	}
+
+
+	/// <summary>
+	/// 추출을 해서 자
+	/// </summary>
+	public static List<FieldInfo> GetFieldsInBase(Type type, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+	{
+		List<FieldInfo> fields = new List<FieldInfo>();
+		HashSet<string> fieldNames = new HashSet<string>(); // 중복방지
+		Stack<Type> stack = new Stack<Type>(); //상속 계층을 역순으로 접근하기 위한 스택
+
+
+		//현재 클래스부터 System.Object까지 부모 클래스들을 stack에 
+		//이유: 나중에 가장 위에 있는 부모부터 차례대로 역순으로 처리하려고
+		while (type != typeof(object))
+		{
+			stack.Push(type);
+			type = type.BaseType;
+		}
+
+		while (stack.Count > 0)
+		{
+			Type currentType = stack.Pop();
+
+			foreach (var field in currentType.GetFields(bindingFlags))
+			{
+				if (fieldNames.Add(field.Name))
+				{
+					fields.Add(field);
+				}
+			}
+		}
+
+		return fields;
 	}
 	#endregion
 

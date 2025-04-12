@@ -85,7 +85,7 @@ public static class Define
         UI = 5,
         Hero = 6,
         Monster = 7,
-        GatheringResource = 8,
+        Env = 8,
         Obstacle = 9,
         Projectile = 10,
     }
@@ -97,6 +97,20 @@ public static class Define
         Big
     }
 
+    public enum EFindPathResult
+    {
+        Fail_LerpCell,
+        Fail_NoPath,
+        Fail_MoveTo,
+        Success,
+    }
+
+    public enum ECellCollisionType
+    {
+        None,       // 갈 수 있는 곳. 진한 파란곳
+        SemiWall,   // 카메라만 갈 수 있는 곳. 연한 파란곳
+        Wall,       // 아예 갈 수 없는 곳
+    }
     public const int CAMERA_PROJECTION_SIZE = 12;
 
     // HARD CODING
@@ -118,6 +132,10 @@ public static class Define
 
     public const int ENV_TREE1_ID = 300001;
     public const int ENV_TREE2_ID = 301000;
+
+    public const char MAP_TOOL_WALL = '0';  // 갈 수 없고
+    public const char MAP_TOOL_NONE = '1';  // 모두 갈 수 있고
+    public const char MAP_TOOL_SEMI_WALL = '2'; // 카메라만 갈 수 있고
 }
 
 public static class AnimName

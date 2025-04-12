@@ -33,7 +33,6 @@ namespace Data
         public string SkeletonDataID;
         public string AnimatorName;
         public List<int> SkillIdList = new List<int>();
-        public int DropItemId;
     }
     #endregion
 
@@ -41,12 +40,13 @@ namespace Data
     [Serializable]
     public class MonsterData : CreatureData
     {
+        public int DropItemId;
     }
 
     [Serializable]
     public class MonsterDataLoader : ILoader<int, MonsterData>
     {
-        public List<MonsterData> monsters = new List<MonsterData>();
+        public List<MonsterData> monsters = new List<MonsterData>(); // 역직렬화
         public Dictionary<int, MonsterData> MakeDict()
         {
             Dictionary<int, MonsterData> dict = new Dictionary<int, MonsterData>();
@@ -66,7 +66,7 @@ namespace Data
     [Serializable]
     public class HeroDataLoader : ILoader<int, HeroData>
     {
-        public List<HeroData> heroes = new List<HeroData>();
+        public List<HeroData> heroes = new List<HeroData>(); // 역직렬화 원본
         public Dictionary<int, HeroData> MakeDict()
         {
             Dictionary<int, HeroData> dict = new Dictionary<int, HeroData>();
@@ -105,7 +105,7 @@ namespace Data
     [Serializable]
     public class SkillDataLoader : ILoader<int, SkillData>
     {
-        public List<SkillData> skills = new List<SkillData>();
+        public List<SkillData> skills = new List<SkillData>(); // 역직렬화 원본
 
         public Dictionary<int, SkillData> MakeDict()
         {
@@ -137,7 +137,7 @@ namespace Data
     [Serializable]
     public class ProjectileDataLoader : ILoader<int, ProjectileData>
     {
-        public List<ProjectileData> projectiles = new List<ProjectileData>();
+        public List<ProjectileData> projectiles = new List<ProjectileData>(); // 역직렬화 원본
 
         public Dictionary<int, ProjectileData> MakeDict()
         {
@@ -166,7 +166,7 @@ namespace Data
     [Serializable]
     public class EnvDataLoader : ILoader<int, EnvData>
     {
-        public List<EnvData> envs = new List<EnvData>();
+        public List<EnvData> envs = new List<EnvData>(); // 역직렬화 원본
         public Dictionary<int, EnvData> MakeDict()
         {
             Dictionary<int, EnvData> dict = new Dictionary<int, EnvData>();

@@ -14,17 +14,24 @@ public class GameScene : BaseScene
 
 		SceneType = EScene.GameScene;
 
-		var map = Managers.Resource.Instantiate("BaseMap");
-		map.name = "@BaseMap";
-		map.transform.position = Vector3.zero;
+		Managers.Map.LoadMap("BaseMap");
 
-        HeroCamp camp = Managers.Object.Spawn<HeroCamp>(new Vector3Int(-10, -5, 0), 0);
+        HeroCamp camp = Managers.Object.Spawn<HeroCamp>(Vector3.zero, 0);
+		camp.SetCellPos(new Vector3Int(0,0,0), true);
 
 
 		for (int i = 0; i < 5; i++)
 		{
-			int heroID = HERO_WIZARD_ID + Random.Range(0, 5);
-            Hero hero = Managers.Object.Spawn<Hero>(new Vector3Int(-10 + Random.Range(-5, 5), -5 + Random.Range(-5, 5), 0), heroID);
+			//int heroID = HERO_WIZARD_ID + Random.Range(0, 5);
+			//int heroID = HERO_KNIGHT_ID;
+			int heroID = HERO_WIZARD_ID;
+			Vector3Int randCellPos = new Vector3Int(0 + Random.Range(-3, 3), 0 + Random.Range(-3, 3), 0);
+			if (Managers.Map.CanGo(randCellPos) == false)
+				continue;
+
+			Hero hero = Managers.Object.Spawn<Hero>(new Vector3Int(1, 0, 0), heroID);
+			//hero.SetCellPos(randCellPos, true);
+			Managers.Map.MoveTo(hero, randCellPos, true);
         }
 		CameraController camera = Camera.main.GetOrAddComponent<CameraController>();
 		camera.Target = camp;
@@ -32,13 +39,15 @@ public class GameScene : BaseScene
 		Managers.UI.ShowBaseUI<UI_Joystick>();
 
 		{ 
-			Managers.Object.Spawn<Monster>(new Vector3Int(0, 1, 0), MONSTER_BEAR_ID);
-			Managers.Object.Spawn<Monster>(new Vector3Int(0, 1, 0), MONSTER_SLIME_ID);
-		}
+			//Managers.Object.Spawn<Monster>(new Vector3Int(0, 1, 0), MONSTER_BEAR_ID);
+			//Managers.Object.Spawn<Monster>(new Vector3Int(1, 1, 0), MONSTER_SLIME_ID);
+   //         Managers.Object.Spawn<Monster>(new Vector3Int(2, 1, 0), MONSTER_GOBLIN_ARCHER_ID);
+   //         Managers.Object.Spawn<Monster>(new Vector3Int(3, 1, 0), MONSTER_GOBLIN_ARCHER_ID);
+        }
 		
 		{ 
-			Env env = Managers.Object.Spawn<Env>(new Vector3Int(0, 1, 0), ENV_TREE1_ID);
-			env.EnvState = EEnvState.Idle;
+			//Env env = Managers.Object.Spawn<Env>(new Vector3Int(0, 1, 0), ENV_TREE1_ID);
+			//env.EnvState = EEnvState.Idle;
 		}
 
         // TODO

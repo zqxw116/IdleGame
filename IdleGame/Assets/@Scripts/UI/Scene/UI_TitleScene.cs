@@ -45,7 +45,7 @@ public class UI_TitleScene : UI_Scene
 	{
 		Managers.Resource.LoadAllAsync<Object>("PreLoad", (key, count, totalCount) =>
 		{
-			Debug.Log($"{key} {count}/{totalCount}");
+			Debug.Log($"{key} <color=cyan>{count}</color>/{totalCount}");
 
 			if (count == totalCount)
 			{

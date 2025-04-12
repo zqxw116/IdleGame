@@ -55,12 +55,12 @@ public class BaseObject : InitBase
 
 
     #region Battle
-    public virtual void OnDamaged(BaseObject attacker)
+    public virtual void OnDamaged(BaseObject attacker, SkillBase skill)
     {
 
     }
 
-    public virtual void OnDead(BaseObject attacker)
+    public virtual void OnDead(BaseObject attacker, SkillBase skill)
     {
 
     }
@@ -128,6 +128,58 @@ public class BaseObject : InitBase
     public virtual void OnAnimEventHandler(TrackEntry trackEntry, Spine.Event e)
     {
         Debug.Log("OnAnimEventHandler");
+    }
+    #endregion
+
+    #region Map
+    // 일정하지 않는 곳에서 스르륵 오게 해주는 것
+    public bool LerpCellPosCompleted { get; protected set; }
+
+    Vector3Int _cellPos;
+    public Vector3Int CellPos // 모든 오브젝트마다 좌표를 관리. 핵심
+    {
+        get { return _cellPos; }
+        protected set
+        {
+            _cellPos = value;
+            LerpCellPosCompleted = false;
+        }
+    }
+
+    public void SetCellPos(Vector3Int cellPos, bool forceMove = false)
+    {
+        CellPos = cellPos;
+        LerpCellPosCompleted = false;
+
+        if (forceMove)  // 스스륵 이동 필요없이 바로 이동하게
+        {
+            transform.position = Managers.Map.Cell2World(CellPos);
+            LerpCellPosCompleted = true;
+        }
+    }
+
+    public void LerpToCellPos(float moveSpeed)
+    {
+        if (LerpCellPosCompleted)
+            return;
+
+        Vector3 destPos = Managers.Map.Cell2World(CellPos);
+        Vector3 dir = destPos - transform.position;
+
+        if (dir.x < 0)
+            LookLeft = true;
+        else
+            LookLeft = false;
+
+        if (dir.magnitude < 0.01f)
+        {
+            transform.position = destPos;
+            LerpCellPosCompleted = true;
+            return;
+        }
+
+        float moveDist = Mathf.Min(dir.magnitude, moveSpeed * Time.deltaTime);
+        transform.position += dir.normalized * moveDist;
     }
     #endregion
 }

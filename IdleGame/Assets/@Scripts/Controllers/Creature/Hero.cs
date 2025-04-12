@@ -111,15 +111,6 @@ public class Hero : Creature
         }
     }
     #region AI
-    public float AttackDistance // 값이 너무 작으면 공격범위 안들어가고 충돌만 됨.
-    {
-        get
-        {
-            float targetRadius = (Target.IsValid() ? Target.ColliderRadius : 0);
-            return ColliderRadius + targetRadius + 2.0f; // 보스몬스터면 다가갈 수 없을 수 있기 때문.
-        }
-    }
-
     protected override void UpdateIdle()
     {
         SetRigidBodyVelocity(Vector2.zero);// 임시코드
@@ -144,7 +135,7 @@ public class Hero : Creature
         }
 
         // 2. 주변 Env 채굴
-        Creature env = FindClosestInRange(HERO_SEARCH_DISTANCE, Managers.Object.Envs) as Creature;
+        Env env = FindClosestInRange(HERO_SEARCH_DISTANCE, Managers.Object.Envs) as Env;
         if (env != null)
         {
             Target = env;
@@ -183,7 +174,9 @@ public class Hero : Creature
                 return;
             }
 
-            ChaseOrAttackTarget(AttackDistance, HERO_SEARCH_DISTANCE);
+            SkillBase skill = Skills.GetReadySkill();
+            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, skill);
+            //ChaseOrAttackTarget(AttackDistance, HERO_SEARCH_DISTANCE);
             return;
         }
 
@@ -208,7 +201,9 @@ public class Hero : Creature
                 return;
             }
 
-            ChaseOrAttackTarget(AttackDistance, HERO_SEARCH_DISTANCE);
+            SkillBase skill = Skills.GetReadySkill();
+            //ChaseOrAttackTarget(AttackDistance, skill);
+            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, skill);
             return;
         }
 
@@ -240,6 +235,7 @@ public class Hero : Creature
 
     protected override void UpdateSkill()
     {
+        SetRigidBodyVelocity(Vector2.zero);
         if (HeroMoveState == EHeroMoveState.ForceMove) // 당장 돌아오세요 용사여!!
         {
             CreatureState = ECreatureState.Move;
@@ -307,13 +303,5 @@ public class Hero : Creature
     {
         base.OnAnimEventHandler(trackEntry, e);
 
-        // TODO
-        CreatureState = ECreatureState.Move;
-
-        // Skill
-        if (Target.IsValid() == false)
-            return;
-
-        Target.OnDamaged(this);
     }
 }

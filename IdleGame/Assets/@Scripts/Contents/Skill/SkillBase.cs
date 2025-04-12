@@ -54,27 +54,27 @@ public abstract class SkillBase : InitBase
 	}
 
 	protected virtual void GenerateProjectile(Creature owner, Vector3 spawnPos)
-	{
-		//Projectile projectile = Managers.Object.Spawn<Projectile>(spawnPos, SkillData.ProjectileId);
+    {
+        Projectile projectile = Managers.Object.Spawn<Projectile>(spawnPos, SkillData.ProjectileId);
 
-		//LayerMask excludeMask = 0;
-		//excludeMask.AddLayer(Define.ELayer.Default);
-		//excludeMask.AddLayer(Define.ELayer.Projectile);
-		//excludeMask.AddLayer(Define.ELayer.Env);
-		//excludeMask.AddLayer(Define.ELayer.Obstacle);
+        LayerMask excludeMask = 0; // 제외할 애들  비트플레그
+        excludeMask.AddLayer(Define.ELayer.Default);
+        excludeMask.AddLayer(Define.ELayer.Projectile);
+        excludeMask.AddLayer(Define.ELayer.Env);
+        excludeMask.AddLayer(Define.ELayer.Obstacle);
 
-		//switch (owner.CreatureType)
-		//{
-		//	case Define.ECreatureType.Hero:
-		//		excludeMask.AddLayer(Define.ELayer.Hero);
-		//		break;
-		//	case Define.ECreatureType.Monster:
-		//		excludeMask.AddLayer(Define.ELayer.Monster);
-		//		break;
-		//}
+        switch (owner.CreatureType)
+        {
+            case Define.ECreatureType.Hero:
+                excludeMask.AddLayer(Define.ELayer.Hero);
+                break;
+            case Define.ECreatureType.Monster:
+                excludeMask.AddLayer(Define.ELayer.Monster);
+                break;
+        }
 
-		//projectile.SetSpawnInfo(Owner, this, excludeMask);
-	}
+        projectile.SetSpawnInfo(Owner, this, excludeMask);
+    }
 
 	protected abstract void OnAnimEventHandler(TrackEntry trackEntry, Event e);
 	protected abstract void OnAnimCompleteHandler(TrackEntry trackEntry);

@@ -47,8 +47,13 @@ public class Monster : Creature
     {
         base.SetInfo(templateID);
 
-        CreatureState = ECreatureState.Idle;
-    }
+		// State
+		CreatureState = ECreatureState.Idle;
+
+		// Skill
+		Skills = gameObject.GetOrAddComponent<SkillComponent>();
+		Skills.SetInfo(this, CreatureData.SkillIdList);
+	}
 
     void Start()
 	{
@@ -102,11 +107,13 @@ public class Monster : Creature
 		}
 		else
 		{
-			// Chase
-			ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, 5.0f);
+            // Chase
+            SkillBase skill = Skills.GetReadySkill();
+            ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, skill);
+            //ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, 5.0f);
 
-			// 너무 멀어지면 포기
-			if (Target.IsValid() == false)
+            // 너무 멀어지면 포기
+            if (Target.IsValid() == false)
 			{
 				Target = null;
 				_destPos = _initPos;
@@ -119,16 +126,37 @@ public class Monster : Creature
 	{
 		Debug.Log("<Color=red>Skill</color>");
 
-		if (_coWait != null) // 일정시간을 기다렸다가 Move로 돌아간다.
+        if (Target.IsValid() == false)
+        {
+			Target = null;
+			_destPos = _initPos;
+			CreatureState = ECreatureState.Move;
 			return;
+		}
 
-		CreatureState = ECreatureState.Move;
+		
 	}
 
 	protected override void UpdateDead()
 	{
 		Debug.Log("<Color=red>Dead</color>");
 
+		SetRigidBodyVelocity(Vector2.zero);
 	}
 	#endregion
+
+
+	#region Battle
+	public override void OnDamaged(BaseObject attacker, SkillBase skill)
+	{
+		base.OnDamaged(attacker, skill);
+	}
+
+	public override void OnDead(BaseObject attacker, SkillBase skill)
+	{
+		base.OnDead(attacker, skill);
+
+		Managers.Object.Despawn(this);
+	}
+    #endregion
 }

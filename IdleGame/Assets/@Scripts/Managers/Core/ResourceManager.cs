@@ -17,6 +17,12 @@ public class ResourceManager
 		if (_resources.TryGetValue(key, out Object resource))
 			return resource as T;
 
+        if (typeof(T) == typeof(Sprite) && key.Contains(".sprite") == false) // DB 설정에서 SPRITE 빠졌으면 
+        {
+			if (_resources.TryGetValue($"{key}.sprite", out resource))
+				return resource as T;
+        }
+
 		return null;
 	}
 
