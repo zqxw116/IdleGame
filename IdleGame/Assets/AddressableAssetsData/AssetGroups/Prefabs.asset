@@ -23,7 +23,7 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5a40e413d750cdb44b0fe888fbf55284
+  - m_GUID: 739dfe4983dfddc4f9ee6debd5549983
     m_Address: BaseMap
     m_ReadOnly: 0
     m_SerializedLabels:
@@ -43,6 +43,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 59fc1762d32bf4a4f9794aeb0ed77435
     m_Address: HeroCamp
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PreLoad
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c8b75e5211bb07f479fde91dcd122838
+    m_Address: Projectile
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
