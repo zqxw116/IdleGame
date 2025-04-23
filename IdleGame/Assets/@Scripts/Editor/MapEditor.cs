@@ -10,7 +10,8 @@ using UnityEditor;
 #endif
 
 /// <summary>
-/// 타일정보 데이터로 가져오는 에디터 툴  // ctrl + shift + m
+/// 타일정보 데이터로 가져오는 에디터 툴 
+///  ctrl + shift + m
 /// </summary>
 public class MapEditor : MonoBehaviour
 {
@@ -55,52 +56,56 @@ public class MapEditor : MonoBehaviour
 		Debug.Log("Map Collision Generation Complete");
 	}
 
-	//[MenuItem("Tools/Create Object Tile Asset %#o")]
-	//public static void CreateObjectTile()
-	//{
-	//	// Monster
-	//	Dictionary<int, Data.MonsterData> MonsterDic = LoadJson<Data.MonsterDataLoader, int, Data.MonsterData>("MonsterData").MakeDict();
-	//	foreach (var data in MonsterDic.Values)
-	//	{
-	//		CustomTile customTile = ScriptableObject.CreateInstance<CustomTile>();
-	//		customTile.Name = data.DescriptionTextID;
-	//		customTile.DataTemplateID = data.DataId;
-	//		customTile.ObjectType = Define.EObjectType.Creature;
-	//		customTile.CreatureType = Define.ECreatureType.Monster;
+    /// <summary>
+    /// 데이터로 CustomTile용 파일 만들어주는 함수
+    ///  ctrl + shift + o
+    /// </summary>
+    [MenuItem("Tools/Create Object Tile Asset %#o")]
+    public static void CreateObjectTile()
+    {
+        // Monster
+        Dictionary<int, Data.MonsterData> MonsterDic = LoadJson<Data.MonsterDataLoader, int, Data.MonsterData>("MonsterData").MakeDict();
+        foreach (var data in MonsterDic.Values)
+        {
+            CustomTile customTile = ScriptableObject.CreateInstance<CustomTile>();
+            customTile.Name = data.DescriptionTextID;
+            customTile.DataTemplateID = data.DataId;
+            customTile.ObjectType = Define.EObjectType.Creature;
+            customTile.CreatureType = Define.ECreatureType.Monster;
 
-	//		string name = $"{data.DataId}_{data.DescriptionTextID}";
-	//		string path = "Assets/@Resources/TileMaps/Tiles/Dev/Monster";
-	//		path = Path.Combine(path, $"{name}.Asset");
+            string name = $"{data.DataId}_{data.DescriptionTextID}";
+            string path = "Assets/@Resources/TileMaps/Tiles/Dev/Monster";
+            path = Path.Combine(path, $"{name}.Asset");
 
-	//		if (File.Exists(path))
-	//			continue;
+            if (File.Exists(path))
+                continue;
 
-	//		AssetDatabase.CreateAsset(customTile, path);
-	//	}
+            AssetDatabase.CreateAsset(customTile, path);
+        }
 
-	//	// Env
-	//	Dictionary<int, Data.EnvData> Env = LoadJson<Data.EnvDataLoader, int, Data.EnvData>("EnvData").MakeDict();
-	//	foreach (var data in Env.Values)
-	//	{
+        // Env
+        Dictionary<int, Data.EnvData> Env = LoadJson<Data.EnvDataLoader, int, Data.EnvData>("EnvData").MakeDict();
+        foreach (var data in Env.Values)
+        {
 
-	//		CustomTile customTile = ScriptableObject.CreateInstance<CustomTile>();
-	//		customTile.Name = data.DescriptionTextID;
-	//		customTile.DataTemplateID = data.DataId;
-	//		customTile.ObjectType = Define.EObjectType.Env;
-	//		customTile.CreatureType = Define.ECreatureType.None;
+            CustomTile customTile = ScriptableObject.CreateInstance<CustomTile>();
+            customTile.Name = data.DescriptionTextID;
+            customTile.DataTemplateID = data.DataId;
+            customTile.ObjectType = Define.EObjectType.Env;
+            customTile.CreatureType = Define.ECreatureType.None;
 
-	//		string name = $"{data.DataId}_{data.DescriptionTextID}";
-	//		string path = "Assets/@Resources/TileMaps/Tiles/Dev/Env";
-	//		path = Path.Combine(path, $"{name}.Asset");
+            string name = $"{data.DataId}_{data.DescriptionTextID}";
+            string path = "Assets/@Resources/TileMaps/Tiles/Dev/Env";
+            path = Path.Combine(path, $"{name}.Asset");
 
-	//		if (File.Exists(path))
-	//			continue;
+            if (File.Exists(path))
+                continue;
 
-	//		AssetDatabase.CreateAsset(customTile, path);
-	//	}
-	//}
+            AssetDatabase.CreateAsset(customTile, path);
+        }
+    }
 
-	private static Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
+    private static Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>
 	{
 		TextAsset textAsset = UnityEditor.AssetDatabase.LoadAssetAtPath<TextAsset>($"Assets/@Resources/Data/JsonData/{path}.json");
 		return JsonConvert.DeserializeObject<Loader>(textAsset.text);

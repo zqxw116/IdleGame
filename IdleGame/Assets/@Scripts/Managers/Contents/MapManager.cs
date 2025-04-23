@@ -50,7 +50,7 @@ public class MapManager
 
 		ParseCollisionData(map, mapName);
 
-	//	SpawnObjectsByData(map, mapName);
+		SpawnObjectsByData(map, mapName);
 	}
 
 	public void DestroyMap()
@@ -101,44 +101,45 @@ public class MapManager
 		}
 	}
 
-	//void SpawnObjectsByData(GameObject map, string mapName, string tilemap = "Tilemap_Object")
-	//{
-	//	Tilemap tm = Util.FindChild<Tilemap>(map, tilemap, true);
+	void SpawnObjectsByData(GameObject map, string mapName, string tilemap = "Tilemap_Object")
+	{
+		Tilemap tm = Util.FindChild<Tilemap>(map, tilemap, true);
 
-	//	if (tm != null)
-	//		tm.gameObject.SetActive(false);
+		if (tm != null)
+			tm.gameObject.SetActive(false); //있으면 꺼둔다
 
-	//	for (int y = tm.cellBounds.yMax; y >= tm.cellBounds.yMin; y--)
-	//	{
-	//		for (int x = tm.cellBounds.xMin; x <= tm.cellBounds.xMax; x++)
-	//		{
-	//			Vector3Int cellPos = new Vector3Int(x, y, 0);
-	//			CustomTile tile = tm.GetTile(cellPos) as CustomTile;
-	//			if (tile == null)
-	//				continue;
+		for (int y = tm.cellBounds.yMax; y >= tm.cellBounds.yMin; y--)
+		{
+			for (int x = tm.cellBounds.xMin; x <= tm.cellBounds.xMax; x++)
+			{
+				Vector3Int cellPos = new Vector3Int(x, y, 0);
+				CustomTile tile = tm.GetTile(cellPos) as CustomTile;
+				if (tile == null)
+					continue;
 
-	//			if (tile.ObjectType == Define.EObjectType.Env)
-	//			{
-	//				Vector3 worldPos = Cell2World(cellPos);
-	//				Env env = Managers.Object.Spawn<Env>(worldPos, tile.DataTemplateID);
-	//				env.SetCellPos(cellPos, true);
-	//			}
-	//			else
-	//			{
-	//				if (tile.CreatureType == Define.ECreatureType.Monster)
-	//				{
-	//					Vector3 worldPos = Cell2World(cellPos);
-	//					Monster monster = Managers.Object.Spawn<Monster>(worldPos, tile.DataTemplateID);
-	//					monster.SetCellPos(cellPos, true);
-	//				}
-	//				else if (tile.CreatureType == Define.ECreatureType.Npc)
-	//				{
+				// 타일맵에 맞게 몬스터 생성한다
+				if (tile.ObjectType == Define.EObjectType.Env) 
+				{
+					Vector3 worldPos = Cell2World(cellPos);
+					Env env = Managers.Object.Spawn<Env>(worldPos, tile.DataTemplateID);
+					env.SetCellPos(cellPos, true);
+				}
+				else
+				{
+					if (tile.CreatureType == Define.ECreatureType.Monster)
+					{
+						Vector3 worldPos = Cell2World(cellPos);
+						Monster monster = Managers.Object.Spawn<Monster>(worldPos, tile.DataTemplateID);
+						monster.SetCellPos(cellPos, true);
+					}
+					else if (tile.CreatureType == Define.ECreatureType.Npc)
+					{
 
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+					}
+				}
+			}
+		}
+	}
 
 	/// <summary>
 	/// 셀 위치로 이동(생성 빼고는 기본적으로 이 함수로 이동)
