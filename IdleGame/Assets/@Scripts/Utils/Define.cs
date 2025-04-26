@@ -106,12 +106,43 @@ public static class Define
         Success,
     }
 
+    public enum ESkillSlot
+    {
+        Default,// 기본
+        Env,    // 채집
+        A,
+        B
+    }
+
     public enum ECellCollisionType
     {
         None,       // 갈 수 있는 곳. 진한 파란곳
         SemiWall,   // 카메라만 갈 수 있는 곳. 연한 파란곳
         Wall,       // 아예 갈 수 없는 곳
     }
+
+    public enum EIndicatorType // 평타공격?
+    {
+        None,
+        Cone,
+        Rectangle,
+    }
+
+    public enum EEffectSize
+    {
+        CircleSmall, // 원형
+        CircleNormal,
+        CircleBig,
+        ConeSmall,   // 콘형
+        ConeNormal,
+        ConeBig,
+    }
+
+    // 나중에 없앨 하드코딩
+    public const float EFFECT_SMALL_RADIUS = 2.5f;
+    public const float EFFECT_NORMAL_RADIUS = 4.5f;
+    public const float EFFECT_BIG_RADIUS = 5.5f;
+
     public const int CAMERA_PROJECTION_SIZE = 12;
 
     // HARD CODING

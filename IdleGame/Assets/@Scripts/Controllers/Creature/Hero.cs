@@ -69,10 +69,6 @@ public class Hero : Creature
 
         // State
         CreatureState = ECreatureState.Idle;
-
-        // Skill
-        Skills = gameObject.GetOrAddComponent<SkillComponent>();
-        Skills.SetInfo(this, CreatureData.SkillIdList);
     }
 
     /// <summary>
@@ -161,9 +157,7 @@ public class Hero : Creature
                 return;
             }
 
-            SkillBase skill = Skills.GetReadySkill();
-            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, skill);
-            //ChaseOrAttackTarget(AttackDistance, HERO_SEARCH_DISTANCE);
+            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, AttackDistance);
             return;
         }
 
@@ -188,9 +182,7 @@ public class Hero : Creature
                 return;
             }
 
-            SkillBase skill = Skills.GetReadySkill();
-            //ChaseOrAttackTarget(AttackDistance, skill);
-            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, skill);
+            ChaseOrAttackTarget(HERO_SEARCH_DISTANCE, AttackDistance);
             return;
         }
 
@@ -286,6 +278,7 @@ public class Hero : Creature
 
     protected override void UpdateSkill()
     {
+        base.UpdateSkill();
         if (HeroMoveState == EHeroMoveState.ForceMove) // 당장 돌아오세요 용사여!!
         {
             CreatureState = ECreatureState.Move;

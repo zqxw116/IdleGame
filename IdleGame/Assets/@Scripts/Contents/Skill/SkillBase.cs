@@ -7,8 +7,8 @@ using Event = Spine.Event;
 public abstract class SkillBase : InitBase
 {
 	public Creature Owner { get; protected set; }
-
-	public Data.SkillData SkillData { get; private set; }
+	public float RemainCoolTime { get; protected set; }
+    public Data.SkillData SkillData { get; private set; }
 
 	public override bool Init()
 	{
@@ -26,10 +26,8 @@ public abstract class SkillBase : InitBase
 		// Register AnimEvent
 		if (Owner.SkeletonAnim != null && Owner.SkeletonAnim.AnimationState != null)
 		{
-			Owner.SkeletonAnim.AnimationState.Event -= OnAnimEventHandler;
-			Owner.SkeletonAnim.AnimationState.Event += OnAnimEventHandler;
-			Owner.SkeletonAnim.AnimationState.Complete -= OnAnimCompleteHandler;
-			Owner.SkeletonAnim.AnimationState.Complete += OnAnimCompleteHandler;
+			Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
+			Owner.SkeletonAnim.AnimationState.Event += OnOwnerAnimEventHandler;
 		}
 	}
 
@@ -44,16 +42,39 @@ public abstract class SkillBase : InitBase
 		if (Owner.SkeletonAnim.AnimationState == null)
 			return;
 
-		Owner.SkeletonAnim.AnimationState.Event -= OnAnimEventHandler;
-		Owner.SkeletonAnim.AnimationState.Complete -= OnAnimCompleteHandler;
+		Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
 	}
 
 	public virtual void DoSkill()
 	{
-		//RemainCoolTime = SkillData.CoolTime;
-	}
+		RemainCoolTime = SkillData.CoolTime;
 
-	protected virtual void GenerateProjectile(Creature owner, Vector3 spawnPos)
+		// 준비된 스킬에서 해제
+		if (Owner.Skills != null)
+			Owner.Skills.SkillList.Remove(this);
+
+		float timeScale = 1;
+		if (Owner.Skills.DefaultSkill == this)
+            Owner.PlayAnimation(0, SkillData.AnimName, false).TimeScale = timeScale;
+        else
+            Owner.PlayAnimation(0, SkillData.AnimName, false).TimeScale = 1;
+
+		StartCoroutine(CoCountDownCoolTime());
+    }
+	private IEnumerator CoCountDownCoolTime()
+	{
+		RemainCoolTime = SkillData.CoolTime;
+		yield return new WaitForSeconds(RemainCoolTime);
+		RemainCoolTime = 0;
+
+
+        // 준비된 스킬에 추가
+        if (Owner.Skills != null)
+            Owner.Skills.SkillList.Add(this);
+
+    }
+
+    protected virtual void GenerateProjectile(Creature owner, Vector3 spawnPos)
     {
         Projectile projectile = Managers.Object.Spawn<Projectile>(spawnPos, SkillData.ProjectileId);
 
@@ -76,6 +97,11 @@ public abstract class SkillBase : InitBase
         projectile.SetSpawnInfo(Owner, this, excludeMask);
     }
 
-	protected abstract void OnAnimEventHandler(TrackEntry trackEntry, Event e);
-	protected abstract void OnAnimCompleteHandler(TrackEntry trackEntry);
+	protected void OnOwnerAnimEventHandler(TrackEntry trackEntry, Event e)
+	{
+		if (trackEntry.Animation.Name == SkillData.AnimName) // 이벤트가 겹칠 수 있기 때문
+            OnAttackEvent();
+    }
+
+	protected abstract void OnAttackEvent();
 }

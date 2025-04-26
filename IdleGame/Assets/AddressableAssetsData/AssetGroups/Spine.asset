@@ -41,12 +41,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 378dd7a7a523b164496aa5b261580005
-    m_Address: bear_SkeletonData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bf9ec093fe189a04d92278eaa0f28574
     m_Address: goblin_SkeletonData
     m_ReadOnly: 0
