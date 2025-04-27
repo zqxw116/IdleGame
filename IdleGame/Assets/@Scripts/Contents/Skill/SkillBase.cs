@@ -59,9 +59,9 @@ public abstract class SkillBase : InitBase
         else
             Owner.PlayAnimation(0, SkillData.AnimName, false).TimeScale = 1;
 
-		StartCoroutine(CoCountDownCoolTime());
+		StartCoroutine(CoCountDownCoolDown());
     }
-	private IEnumerator CoCountDownCoolTime()
+	private IEnumerator CoCountDownCoolDown()
 	{
 		RemainCoolTime = SkillData.CoolTime;
 		yield return new WaitForSeconds(RemainCoolTime);
@@ -72,6 +72,9 @@ public abstract class SkillBase : InitBase
         if (Owner.Skills != null)
             Owner.Skills.SkillList.Add(this);
 
+    }
+    public virtual void CancelSkill()
+    {
     }
 
     protected virtual void GenerateProjectile(Creature owner, Vector3 spawnPos)

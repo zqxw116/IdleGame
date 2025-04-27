@@ -41,14 +41,14 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 14cff170c18690a4da9066d1f7af679d
-    m_Address: ProjectileData
+  - m_GUID: 67523fcbfa21a464e9d6ed672e1f3233
+    m_Address: BaseMapCollision
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 67523fcbfa21a464e9d6ed672e1f3233
-    m_Address: BaseMapCollision
+  - m_GUID: 14cff170c18690a4da9066d1f7af679d
+    m_Address: ProjectileData
     m_ReadOnly: 0
     m_SerializedLabels:
     - PreLoad
