@@ -87,6 +87,8 @@ Shader "SkillIndicator/Circle"
                 half2 uv = i.uv;
 
                 // 텍스처 샘플링을 통해 픽셀 색상 얻어옴.
+                // uv는 실제 텍스쳐를 어떻게 붙힐지 0~1로만 표현(왼쪽위 0,0 오른쪽 아래 1,1)
+                // 
                 half4 mainTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
                 mainTex *= _Intensity;
 
@@ -98,15 +100,15 @@ Shader "SkillIndicator/Circle"
                 float2 centerUV = (uv * 2 - 1);
 
                 // atan2(y,x) : atan(y/x)에 해당하는 함수로, 
-                // atan(x)는 [-π/2, π/2]의 범위의 값을 가지지만, atan2(y,x)는 [-π, π]의 값을 리턴한다.
+                // atan(x)는 [-90(π/2), 90(π/2)]의 범위의 값을 가지지만, atan2(y,x)는 [-180(π), 180(π)]의 값을 리턴한다.
                 // atan2(y,x)는 x≠0 이면 항상 올바른 값을 계산핤 수 있으므로 더 선호한다.
                 // 결론 : atan2UV : 0~1 사이의 값 (각도 비율)
                 float atan2UV = 1-abs(atan2(centerUV.g, centerUV.r)/3.14);
 
                 // _Sector : 일부분만 그릴지 여부 (0 or 1)
-                // ceil(x) : 올림한 정수를 리턴(무조건 올림)
+                // ceil(x) : 올림한 정수를 리턴(무조건 올림)   음수면 무조건 0이 나온다
                 // lerp(x,y,s) : 선형보간인 x + s(y - x) 를 리턴한다.
-                // Angle (0~360) * 0.002778 -> (0~1)
+                // Angle (0~360) * 0.002778 -> (0~1)  360인 값을 0~1값으로 만들려고 함
                 // 결론 : ceil 결과는 0 or 1. ceil을 통해 비교를 하고, _Sector를 통해 사용 여부 고른다 (전체: 1, 부분: 0 or 1)
                 // 즉, 각도 내부라면 sector가 1, 아니면 0.
                 half sector = lerp(1.0, 1.0 - ceil(atan2UV - _Angle*0.002777778), _Sector);
