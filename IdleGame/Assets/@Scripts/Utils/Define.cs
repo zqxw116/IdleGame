@@ -138,6 +138,17 @@ public static class Define
         ConeBig,
     }
 
+
+    /// <summary>
+    /// 스탯 변화방식
+    /// </summary>
+    public enum EStatModType
+    {
+        Add,
+        PercentAdd,
+        PercentMult,
+    }
+
     // 나중에 없앨 하드코딩
     public const float EFFECT_SMALL_RADIUS = 2.5f;
     public const float EFFECT_NORMAL_RADIUS = 4.5f;
