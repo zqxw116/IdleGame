@@ -12,6 +12,7 @@ public class Creature : BaseObject
     public SkillComponent Skills { get; protected set; }
     public Data.CreatureData CreatureData { get; protected set; }
     public ECreatureType CreatureType { get; protected set; } = ECreatureType.None;
+    public EffectComponent Effects { get; protected set; }
     
     #region Stats
     public float Hp { get; set; }
@@ -83,20 +84,8 @@ public class Creature : BaseObject
         RigidBody.mass = 0;
 
         // Spine
-        SkeletonAnim.skeletonDataAsset = Managers.Resource.Load<SkeletonDataAsset>(CreatureData.SkeletonDataID);
-        SkeletonAnim.Initialize(true);
+        SetSpineAnimation(CreatureData.SkeletonDataID, SortingLayers.CREATURE);
 
-        // Register AnimEvent
-        if (SkeletonAnim.AnimationState != null)
-        {
-			SkeletonAnim.AnimationState.Event -= OnAnimEventHandler;
-			SkeletonAnim.AnimationState.Event += OnAnimEventHandler;
-		}
-
-        // Spine SkeletonAnimation은 SpriteRenderer 를 사용하지 않고 MeshRenderer을 사용함.
-        // 그렇기떄문에 2D Sort Axis가 안먹히게 되는데 SortingGroup을 SpriteRenderer, MeshRenderer을같이 계산함.
-        SortingGroup sg = Util.GetOrAddComponent<SortingGroup>(gameObject);
-        sg.sortingOrder = SortingLayers.CREATURE;
 
 		// Skill
 		Skills = gameObject.GetOrAddComponent<SkillComponent>();
@@ -116,10 +105,14 @@ public class Creature : BaseObject
 
         // State
         CreatureState = ECreatureState.Idle;
+        
+        // Effect
+        Effects = gameObject.AddComponent<EffectComponent>();
+        Effects.SetInfo(this);
 
-		// Map
-		// 매 프레임마다 cell 위치로 스르륵 이동
-		StartCoroutine(CoLerpToCellPos());
+        // Map
+        // 매 프레임마다 cell 위치로 스르륵 이동
+        StartCoroutine(CoLerpToCellPos());
     }
 
 	protected override void UpdateAnimation()
