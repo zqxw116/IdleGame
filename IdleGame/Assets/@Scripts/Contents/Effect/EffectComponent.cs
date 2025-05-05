@@ -15,6 +15,9 @@ public class EffectComponent : MonoBehaviour
     }
 
     /// <summary>
+    /// 도트 뎀
+    /// 도트 힐
+    /// 패시브 영구적 등..
     /// 어떠한 스킬이 묻었을 때 작동되는
     /// </summary>
     public List<EffectBase> GenerateEffects(IEnumerable<int> effectIds, EEffectSpawnType spawnType)

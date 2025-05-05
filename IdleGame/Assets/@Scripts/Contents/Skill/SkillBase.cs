@@ -6,75 +6,76 @@ using Event = Spine.Event;
 
 public abstract class SkillBase : InitBase
 {
-	public Creature Owner { get; protected set; }
-	public float RemainCoolTime { get; protected set; }
+    public Creature Owner { get; protected set; }
+    public float RemainCoolTime { get; set; }
+
     public Data.SkillData SkillData { get; private set; }
 
-	public override bool Init()
-	{
-		if (base.Init() == false)
-			return false;
+    public override bool Init()
+    {
+        if (base.Init() == false)
+            return false;
 
-		return true;
-	}
+        return true;
+    }
 
-	public virtual void SetInfo(Creature owner, int skillTemplateID)
-	{
-		Owner = owner;
-		SkillData = Managers.Data.SkillDic[skillTemplateID];
+    public virtual void SetInfo(Creature owner, int skillTemplateID)
+    {
+        Owner = owner;
+        SkillData = Managers.Data.SkillDic[skillTemplateID];
 
-		// Register AnimEvent
-		if (Owner.SkeletonAnim != null && Owner.SkeletonAnim.AnimationState != null)
-		{
-			Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
-			Owner.SkeletonAnim.AnimationState.Event += OnOwnerAnimEventHandler;
-		}
-	}
+        // Register AnimEvent
+        if (Owner.SkeletonAnim != null && Owner.SkeletonAnim.AnimationState != null)
+        {
+            Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
+            Owner.SkeletonAnim.AnimationState.Event += OnOwnerAnimEventHandler;
+        }
+    }
 
-	private void OnDisable()
-	{
-		if (Managers.Game == null)
-			return;
-		if (Owner.IsValid() == false)
-			return;
-		if (Owner.SkeletonAnim == null)
-			return;
-		if (Owner.SkeletonAnim.AnimationState == null)
-			return;
+    private void OnDisable()
+    {
+        if (Managers.Game == null)
+            return;
+        if (Owner.IsValid() == false)
+            return;
+        if (Owner.SkeletonAnim == null)
+            return;
+        if (Owner.SkeletonAnim.AnimationState == null)
+            return;
 
-		Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
-	}
+        Owner.SkeletonAnim.AnimationState.Event -= OnOwnerAnimEventHandler;
+    }
 
-	public virtual void DoSkill()
-	{
-		RemainCoolTime = SkillData.CoolTime;
+    public virtual void DoSkill()
+    {
+        // 준비된 스킬에서 해제
+        if (Owner.Skills != null)
+            Owner.Skills.ActiveSkills.Remove(this);
 
-		// 준비된 스킬에서 해제
-		if (Owner.Skills != null)
-			Owner.Skills.SkillList.Remove(this);
+        float timeScale = 1.0f;
 
-		float timeScale = 1;
-		if (Owner.Skills.DefaultSkill == this)
+        if (Owner.Skills.DefaultSkill == this)
             Owner.PlayAnimation(0, SkillData.AnimName, false).TimeScale = timeScale;
         else
             Owner.PlayAnimation(0, SkillData.AnimName, false).TimeScale = 1;
 
-		StartCoroutine(CoCountDownCoolDown());
+        StartCoroutine(CoCountdownCooldown());
     }
-	private IEnumerator CoCountDownCoolDown()
-	{
-		RemainCoolTime = SkillData.CoolTime;
-		yield return new WaitForSeconds(RemainCoolTime);
-		RemainCoolTime = 0;
 
+    private IEnumerator CoCountdownCooldown()
+    {
+        RemainCoolTime = SkillData.CoolTime;
+        yield return new WaitForSeconds(SkillData.CoolTime);
+        RemainCoolTime = 0;
 
         // 준비된 스킬에 추가
         if (Owner.Skills != null)
-            Owner.Skills.SkillList.Add(this);
-
+            Owner.Skills.ActiveSkills.Add(this);
     }
+
     public virtual void CancelSkill()
     {
+
     }
 
     protected virtual void GenerateProjectile(Creature owner, Vector3 spawnPos)
@@ -100,11 +101,12 @@ public abstract class SkillBase : InitBase
         projectile.SetSpawnInfo(Owner, this, excludeMask);
     }
 
-	protected void OnOwnerAnimEventHandler(TrackEntry trackEntry, Event e)
-	{
-		if (trackEntry.Animation.Name == SkillData.AnimName) // 이벤트가 겹칠 수 있기 때문
+    private void OnOwnerAnimEventHandler(TrackEntry trackEntry, Event e)
+    {
+        // 다른스킬의 애니메이션 이벤트도 받기 때문에 자기꺼만 써야함
+        if (trackEntry.Animation.Name == SkillData.AnimName)
             OnAttackEvent();
     }
 
-	protected abstract void OnAttackEvent();
+    protected abstract void OnAttackEvent();
 }

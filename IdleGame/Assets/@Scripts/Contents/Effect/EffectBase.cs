@@ -44,7 +44,15 @@ public class EffectBase : BaseObject
         // Duration = EffectData.TickTime * EffectData.TickCount;
         // Period = EffectData.TickTime;
     }
-
+    /// <summary>
+    /// 도트 뎀
+    /// 도트 힐
+    /// 패시브 영구적
+    /// 힘 버브
+    /// 체력 버프
+    /// 민첩 디버프
+    /// ㄴ...
+    /// </summary>
     public virtual void ApplyEffect()
     {
         ShowEffect();

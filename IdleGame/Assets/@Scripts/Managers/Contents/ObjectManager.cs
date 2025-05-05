@@ -49,7 +49,7 @@ public class ObjectManager
     public T Spawn<T>(Vector3Int cellPos, int templateID) where T : BaseObject
 	{
 		Vector3 spawnPos = Managers.Map.Cell2World(cellPos);
-		return Spawn<T>(cellPos, templateID);
+		return Spawn<T>(spawnPos, templateID);
     }
 
     public T Spawn<T>(Vector3 position, int templateID) where T : BaseObject
@@ -135,6 +135,11 @@ public class ObjectManager
 		{
             Env env = obj.GetComponent<Env>();
 			Envs.Remove(env);
+        }
+        else if (obj.ObjectType == EObjectType.Effect)
+        {
+			EffectBase effect = obj as EffectBase;
+			Effects.Remove(effect);
         }
         else if (obj.ObjectType == EObjectType.HeroCamp)
         {

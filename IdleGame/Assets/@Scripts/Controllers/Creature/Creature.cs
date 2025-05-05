@@ -127,6 +127,10 @@ public class Creature : BaseObject
 				break;
 			case ECreatureState.Move:
 				PlayAnimation(0, AnimName.MOVE, true);
+                break;
+			case ECreatureState.OnDamaged:
+				PlayAnimation(0, AnimName.IDLE, true);
+                Skills.CurrentSkill.CancelSkill();
 				break;
 			case ECreatureState.Dead:
 				PlayAnimation(0, AnimName.DEAD, true);
@@ -155,6 +159,9 @@ public class Creature : BaseObject
 					break;
 				case ECreatureState.Skill:
 					UpdateSkill();
+					break;
+				case ECreatureState.OnDamaged:
+                    UpdateOnDamaged();
 					break;
 				case ECreatureState.Dead:
 					UpdateDead();
@@ -201,6 +208,7 @@ public class Creature : BaseObject
 
         StartWait(delay);
     }
+	protected virtual void UpdateOnDamaged() { }
 	protected virtual void UpdateDead() { }
     #endregion
 
@@ -248,6 +256,10 @@ public class Creature : BaseObject
 			OnDead(attacker, skill);
 			CreatureState = ECreatureState.Dead;
 		}
+
+        // 스킬에 다른 이펙트 적용. 스킬 데이터 시트에 있는 이펙트를 붙여주겠다. 큰 프로젝트일수록 데이터 시트가 복잡해진다.
+        if (skill.SkillData.EffectIds != null)
+            Effects.GenerateEffects(skill.SkillData.EffectIds.ToArray(), EEffectSpawnType.Skill);
     }
 
     public override void OnDead(BaseObject attacker, SkillBase skill)
