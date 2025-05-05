@@ -13,7 +13,16 @@ public class Creature : BaseObject
     public Data.CreatureData CreatureData { get; protected set; }
     public ECreatureType CreatureType { get; protected set; } = ECreatureType.None;
     public EffectComponent Effects { get; protected set; }
-    
+
+    float DistToTargetSqr   // ExtraCells 추가 적용
+    {
+        get
+        {
+            Vector3 dir = (Target.transform.position - transform.position);
+            float distToTarget = Math.Max(0, dir.magnitude - Target.ExtraCells * 1f - ExtraCells * 1f); // TEMP
+            return distToTarget * distToTarget;
+        }
+    }
     #region Stats
     public float Hp { get; set; }
     public CreatureStat MaxHp;
@@ -189,8 +198,7 @@ public class Creature : BaseObject
             return;
         }
 
-        Vector3 dir = (Target.CenterPosition - CenterPosition);
-        float distToTargetSqr = dir.sqrMagnitude;
+        float distToTargetSqr = DistToTargetSqr;
         float attackDistanceSqr = AttackDistance * AttackDistance;
         if (distToTargetSqr > attackDistanceSqr)
         {
@@ -309,8 +317,7 @@ public class Creature : BaseObject
     /// </summary>
     protected void ChaseOrAttackTarget(float chaseRange, float attackRange)
     {
-        Vector3 dir = (Target.transform.position - transform.position);
-        float distToTargetSqr = dir.sqrMagnitude;
+        float distToTargetSqr = DistToTargetSqr;
         float attackDistanceSqr = attackRange * attackRange;
 
         if (distToTargetSqr <= attackDistanceSqr)
@@ -361,7 +368,7 @@ public class Creature : BaseObject
 			return EFindPathResult.Fail_LerpCell;
 
         // A* 길찾기
-        List<Vector3Int> path = Managers.Map.FindPath(CellPos, destCellPos, maxDepth);
+        List<Vector3Int> path = Managers.Map.FindPath(this, CellPos, destCellPos, maxDepth);
         if (path.Count < 2)
             return EFindPathResult.Fail_NoPath;
 
@@ -413,6 +420,36 @@ public class Creature : BaseObject
 			yield return null;
 		}
 	}
-	#endregion
+    #endregion
 
+
+
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // 점 색상 설정
+        Gizmos.color = Color.red;
+
+        // 현재 transform 위치에 작은 구(점)를 그림
+        Gizmos.DrawSphere(Managers.Map.Cell2World(CellPos), 0.5f);
+
+
+        // 점 색상 설정
+        Gizmos.color = Color.yellow;
+
+        int extraCells = this.ExtraCells;
+
+        for (int dx = -extraCells; dx <= extraCells; dx++)
+        {
+            for (int dy = -extraCells; dy <= extraCells; dy++)
+            {
+                Vector3Int checkPos = new Vector3Int(CellPos.x + dx, CellPos.y + dy);
+
+                Gizmos.DrawSphere(Managers.Map.Cell2World(checkPos), 0.3f);
+            }
+        }
+    }
+
+#endif
 }

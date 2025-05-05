@@ -207,7 +207,7 @@ public static class Define
     public const float HERO_DEFAULT_STOP_RANGE = 1.5f;
 
     // A* 길찾기 최대 길이 제한
-    public const int HERO_DEFAULT_MOVE_DEPTH = 5; // 최대 5칸까지
+    public const int HERO_DEFAULT_MOVE_DEPTH = 10; // 최대 5칸까지
     public const int MONSTER_DEFAULT_MOVE_DEPTH = 3;
 
 

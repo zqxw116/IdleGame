@@ -8,6 +8,7 @@ using static Define;
 
 public class BaseObject : InitBase
 {
+    public int ExtraCells { get; set; } = 0;
 	public EObjectType ObjectType { get; protected set; } = EObjectType.None;
 	public CircleCollider2D Collider { get; private set; }
 	public SkeletonAnimation SkeletonAnim { get; private set; }
@@ -204,4 +205,5 @@ public class BaseObject : InitBase
         transform.position += dir.normalized * moveDist;
     }
     #endregion
+
 }

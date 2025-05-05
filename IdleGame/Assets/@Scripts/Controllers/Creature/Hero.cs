@@ -232,10 +232,10 @@ public class Hero : Creature
         if ((CellPos - destCellPos).magnitude <= 10) // 10칸 이하면 문제 없다
             return false;
 
-        if (Managers.Map.CanGo(destCellPos, ignoreObjects: true) == false) // 갈 수 없는데 전체 스캔을 하면 문제
+        if (Managers.Map.CanGo(this, destCellPos, ignoreObjects: true) == false) // 갈 수 없는데 전체 스캔을 하면 문제
             return false;
 
-        List<Vector3Int> path = Managers.Map.FindPath(CellPos, destCellPos, 100);
+        List<Vector3Int> path = Managers.Map.FindPath(this, CellPos, destCellPos, 100);
         if (path.Count < 2)
             return false;
 

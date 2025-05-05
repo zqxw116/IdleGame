@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static Define;
@@ -149,8 +150,8 @@ public class MapManager
 	/// </summary>
 	public bool MoveTo(Creature obj, Vector3Int cellPos, bool forceMove = false)
 	{
-		// 1. 셀위치 이동 가능한지 확인(다른 오브젝트 있으면 안함)
-		if (CanGo(cellPos) == false)
+		// 1. 셀위치 이동 가능한지 확인(다른 오브젝트 있으면 안함) + extra cell도 더해짐
+		if (CanGo(obj, cellPos) == false)
 			return false;
 
 		// 2. 기존 좌표에 있던 오브젝트를 밀어준다.
@@ -174,7 +175,7 @@ public class MapManager
 	/// </summary>
     public List<T> GatherObjects<T>(Vector3 pos, float rangeX, float rangeY) where T : BaseObject
     {
-        List<T> objects = new List<T>();
+        HashSet<T> objects = new HashSet<T>();
 
         Vector3Int left = World2Cell(pos + new Vector3(-rangeX, 0));
         Vector3Int right = World2Cell(pos + new Vector3(+rangeX, 0));
@@ -200,7 +201,7 @@ public class MapManager
             }
         }
 
-        return objects;
+        return objects.ToList();
     }
 
 
@@ -217,71 +218,106 @@ public class MapManager
 		return GetObject(cellPos);
 	}
 
-	public bool RemoveObject(BaseObject obj)
-	{
-		BaseObject prev = GetObject(obj.CellPos);
 
-		// 처음 신청했으면 해당 CellPos의 오브젝트가 본인이 아닐 수도 있음
-		if (prev != obj)	// 이전 오브젝트 있으면 return
-			return false;
+    void RemoveObject(BaseObject obj)
+    {
+        // 기존의 좌표 제거
+        int extraCells = 0;
+        if (obj != null)
+            extraCells = obj.ExtraCells;
 
-		_cells[obj.CellPos] = null;
-		return true;
-	}
+        Vector3Int cellPos = obj.CellPos;
 
-	public bool AddObject(BaseObject obj, Vector3Int cellPos)
-	{
-		if (CanGo(cellPos) == false)	// 먼저 갈 수 있는지 확인
-		{
-			Debug.LogWarning($"AddObject Failed");
-			return false;
-		}
+        for (int dx = -extraCells; dx <= extraCells; dx++)
+        {
+            for (int dy = -extraCells; dy <= extraCells; dy++)
+            {
+                Vector3Int newCellPos = new Vector3Int(cellPos.x + dx, cellPos.y + dy);
+                BaseObject prev = GetObject(newCellPos);
 
-		BaseObject prev = GetObject(cellPos);
-		if (prev != null)	// 동일한 좌표에 다른 오브젝트 있으면 return
-		{
-			Debug.LogWarning($"AddObject Failed");	// 무조건 한칸에 하나의 오브젝트
-			return false;
-		}
+                if (prev == obj) // 그 위치에 내가 있다면
+                    _cells[newCellPos] = null;
+            }
+        }
+    }
 
-		_cells[cellPos] = obj;
-		return true;
-	}
+    void AddObject(BaseObject obj, Vector3Int cellPos)
+    {
+        int extraCells = 0;
+        if (obj != null)
+            extraCells = obj.ExtraCells;
 
-	public bool CanGo(Vector3 worldPos, bool ignoreObjects = false, bool ignoreSemiWall = false)
-	{
-		return CanGo(World2Cell(worldPos), ignoreObjects, ignoreSemiWall);
-	}
-	/// <summary>
-	/// 그 위치에 갈 수 있는지
+        for (int dx = -extraCells; dx <= extraCells; dx++)
+        {
+            for (int dy = -extraCells; dy <= extraCells; dy++)
+            {
+                Vector3Int newCellPos = new Vector3Int(cellPos.x + dx, cellPos.y + dy);
+
+                BaseObject prev = GetObject(newCellPos);
+                if (prev != null && prev != obj)
+                    Debug.LogWarning($"AddObject 수상함");
+
+                _cells[newCellPos] = obj;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 그 위치에 갈 수 있는지
 	/// </summary>							// 오브젝트 허락할지			// 카메라만 갈 수 있는지
-	public bool CanGo(Vector3Int cellPos, bool ignoreObjects = false, bool ignoreSemiWall = false)
-	{
-		if (cellPos.x < MinX || cellPos.x > MaxX)
-			return false;
-		if (cellPos.y < MinY || cellPos.y > MaxY)
-			return false;
+    public bool CanGo(BaseObject self, Vector3 worldPos, bool ignoreObjects = false, bool ignoreSemiWall = false)
+    {
+        return CanGo(self, World2Cell(worldPos), ignoreObjects, ignoreSemiWall);
+    }
 
-		if (ignoreObjects == false)
-		{
-			BaseObject obj = GetObject(cellPos);
-			if (obj != null)
-				return false;
-		}
+    public bool CanGo(BaseObject self, Vector3Int cellPos, bool ignoreObjects = false, bool ignoreSemiWall = false)
+    {
+        int extraCells = 0;
+        if (self != null)
+            extraCells = self.ExtraCells;
 
-		int x = cellPos.x - MinX;
-		int y = MaxY - cellPos.y;
-		ECellCollisionType type = _collision[x, y];
-		if (type == ECellCollisionType.None)	// 갈 수 있는지 확인
-			return true;
+        for (int dx = -extraCells; dx <= extraCells; dx++)
+        {
+            for (int dy = -extraCells; dy <= extraCells; dy++)
+            {
+                Vector3Int checkPos = new Vector3Int(cellPos.x + dx, cellPos.y + dy);
 
-		if (ignoreSemiWall && type == ECellCollisionType.SemiWall)
-			return true;
+                if (CanGo_Internal(self, checkPos, ignoreObjects, ignoreSemiWall) == false)
+                    return false;
+            }
+        }
 
-		return false;
-	}
+        return true;
+    }
 
-	public void ClearObjects()
+    bool CanGo_Internal(BaseObject self, Vector3Int cellPos, bool ignoreObjects = false, bool ignoreSemiWall = false)
+    {
+        if (cellPos.x < MinX || cellPos.x > MaxX)
+            return false;
+        if (cellPos.y < MinY || cellPos.y > MaxY)
+            return false;
+
+        if (ignoreObjects == false)
+        {
+            BaseObject obj = GetObject(cellPos);
+            if (obj != null && obj != self) // 내 자신일 경우 스킵
+                return false;
+        }
+
+        int x = cellPos.x - MinX;
+        int y = MaxY - cellPos.y;
+        ECellCollisionType type = _collision[x, y];
+        if (type == ECellCollisionType.None)
+            return true;
+
+        if (ignoreSemiWall && type == ECellCollisionType.SemiWall)
+            return true;
+
+        return false;
+    }
+
+    public void ClearObjects()
 	{
 		_cells.Clear();
 	}
@@ -318,7 +354,7 @@ public class MapManager
 		new Vector3Int(-1, 1, 0),   // LU: 좌상단
 	};
 
-    public List<Vector3Int> FindPath(Vector3Int startCellPos, Vector3Int destCellPos, int maxDepth = 10)
+    public List<Vector3Int> FindPath(BaseObject self, Vector3Int startCellPos, Vector3Int destCellPos, int maxDepth = 10)
     {
         Dictionary<Vector3Int, int> best = new Dictionary<Vector3Int, int>(); // 각 셀에 대해 지금까지 발견한 최소 휴리스틱(예상 비용)을 저장하는 Dictionary.
 		Dictionary<Vector3Int, Vector3Int> parent = new Dictionary<Vector3Int, Vector3Int>(); // 경로 추적을 위해, 각 셀이 이전에 어디에서 왔는지 기록하는 Dictionary.
@@ -361,7 +397,7 @@ public class MapManager
                 Vector3Int next = pos + delta;
 
                 // 갈 수 없는 장소면 스킵.
-                if (CanGo(next) == false)
+                if (CanGo(self, next) == false) // 임시 null
                     continue;
 
                 // 예약 진행
