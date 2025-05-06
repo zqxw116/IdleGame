@@ -22,7 +22,7 @@ public class DataTransformer : EditorWindow
 		ParseExcelDataToJson<EnvDataLoader, EnvData>("Env");
 		ParseExcelDataToJson<ProjectileDataLoader, ProjectileData>("Projectile");
 		ParseExcelDataToJson<EffectDataLoader, EffectData>("Effect");
-		//LEGACY_ParseTestData("Test"); // 과거 노가다형식으로 데이터 파싱할 때
+		ParseExcelDataToJson<AoEDataLoader, AoEData>("AoE");
 
 		Debug.Log("DataTransformer Completed");
 	}

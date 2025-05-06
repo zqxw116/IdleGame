@@ -20,7 +20,7 @@ public class EffectComponent : MonoBehaviour
     /// 패시브 영구적 등..
     /// 어떠한 스킬이 묻었을 때 작동되는
     /// </summary>
-    public List<EffectBase> GenerateEffects(IEnumerable<int> effectIds, EEffectSpawnType spawnType)
+    public List<EffectBase> GenerateEffects(IEnumerable<int> effectIds, EEffectSpawnType spawnType, SkillBase skill)
     {
         List<EffectBase> generatedEffects = new List<EffectBase>();
 
@@ -48,7 +48,7 @@ public class EffectComponent : MonoBehaviour
 
 
             // Effect 목록을 추가
-            effect.SetInfo(id, _owner, spawnType);
+            effect.SetInfo(id, _owner, spawnType, skill);
             effect.ApplyEffect(); // Effect 실행
         }
 
