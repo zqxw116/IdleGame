@@ -11,7 +11,6 @@ public class Creature : BaseObject
     public BaseObject Target { get; protected set; }
     public SkillComponent Skills { get; protected set; }
     public Data.CreatureData CreatureData { get; protected set; }
-    public ECreatureType CreatureType { get; protected set; } = ECreatureType.None;
     public EffectComponent Effects { get; protected set; }
 
     float DistToTargetSqr   // ExtraCells 추가 적용
@@ -69,15 +68,13 @@ public class Creature : BaseObject
 	{
 		if (base.Init() == false)
 			return false;
-
-		ObjectType = EObjectType.Creature;
 		return true;
 	}
 
 	public virtual void SetInfo(int templateID)
     {
         DataTemplateID = templateID;
-		if (CreatureType == ECreatureType.Hero)
+		if (ObjectType == EObjectType.Hero)
 			CreatureData = Managers.Data.HeroDic[templateID];
 		else
 			CreatureData = Managers.Data.MonsterDic[templateID];
