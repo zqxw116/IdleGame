@@ -17,6 +17,8 @@ public class MapManager
 	// (CellPos, BaseObject)
 	// 물체끼리의 충돌을 체크하기 위해 존재
 	Dictionary<Vector3Int, BaseObject> _cells = new Dictionary<Vector3Int, BaseObject>(); // 한칸에 오브젝트 하나
+	public StageTransition StageTransition;
+	
 	// 갈 수 있는 영역과 갈 수 없는 영역을 가진다
 	private int MinX;
 	private int MaxX;
@@ -45,7 +47,9 @@ public class MapManager
 		map.transform.position = Vector3.zero;
 		map.name = $"@Map_{mapName}";
 
-		Map = map;
+        StageTransition = map.GetComponent<StageTransition>();
+
+        Map = map;
 		MapName = mapName;
 		CellGrid = map.GetComponent<Grid>();
 

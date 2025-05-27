@@ -52,6 +52,11 @@ public class StageTransition : InitBase
 
     public void OnMapChanged(int newMapIndex)
     {
+        if (newMapIndex == -1)
+        {
+            Debug.LogError("Map을 찾지 못해서 예외처리");
+            return;
+        }
         CurrentStageIndex = newMapIndex;
         CurrentStage = Stages[CurrentStageIndex];
         
