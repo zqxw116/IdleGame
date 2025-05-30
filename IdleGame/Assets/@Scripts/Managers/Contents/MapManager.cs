@@ -54,8 +54,6 @@ public class MapManager
 		CellGrid = map.GetComponent<Grid>();
 
 		ParseCollisionData(map, mapName);
-
-		SpawnObjectsByData(map, mapName);
 	}
 
 	public void DestroyMap()
@@ -106,16 +104,6 @@ public class MapManager
 		}
 	}
 
-	void SpawnObjectsByData(GameObject map, string mapName, string tilemap = "Tilemap_Object")
-	{
-		Tilemap tm = Util.FindChild<Tilemap>(map, tilemap, true);
-
-		if (tm != null)
-			tm.gameObject.SetActive(false); //있으면 꺼둔다
-
-		//temp
-		return;
-	}
 
 	/// <summary>
 	/// 셀 위치로 이동(생성 빼고는 기본적으로 이 함수로 이동)

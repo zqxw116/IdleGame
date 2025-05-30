@@ -13,6 +13,7 @@ public class ObjectManager
 	public HashSet<Env> Envs { get; } = new HashSet<Env>();
 	public HashSet<EffectBase> Effects { get; } = new HashSet<EffectBase>();
 	public HeroCamp Camp{ get; private set; }
+	public HashSet<Npc> Npcs { get; } = new HashSet<Npc>();
 
 	#region Roots
 	public Transform GetRootTransform(string name)
@@ -29,6 +30,7 @@ public class ObjectManager
 	public Transform ProjectileRoot { get { return GetRootTransform("@Projectiles"); } }
 	public Transform EnvRoot { get { return GetRootTransform("@Envs"); } }
 	public Transform EffectRoot { get { return GetRootTransform("@Effects"); } }
+	public Transform NpcRoot { get { return GetRootTransform("@Npc"); } }
     #endregion
 
     public void ShowDamageFont(Vector2 position, float damage, Transform parent, bool isCritical = false)
@@ -100,6 +102,15 @@ public class ObjectManager
         {
 			Camp = go.GetComponent<HeroCamp>();
         }
+        else if (obj.ObjectType == EObjectType.Npc)
+        {
+            obj.transform.parent = NpcRoot;
+
+            Npc npc = go.GetOrAddComponent<Npc>();
+            Npcs.Add(npc);
+
+            npc.SetInfo(templateID);
+        }
 
         return obj as T; // obj만 반환하면 에러가 생김. 제네릭이 아니기 때문
     }
@@ -136,6 +147,11 @@ public class ObjectManager
         else if (obj.ObjectType == EObjectType.HeroCamp)
         {
             Camp = null;
+        }
+        else if (obj.ObjectType == EObjectType.Npc)
+        {
+            Npc npc = obj as Npc;
+            Npcs.Remove(npc);
         }
         Managers.Resource.Destroy(obj.gameObject);
 	}
