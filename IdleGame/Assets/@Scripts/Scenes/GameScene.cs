@@ -52,6 +52,7 @@ public class GameScene : BaseScene
         }
         // TODO
 
+        Managers.UI.CloseAllPopupUI();
         return true;
 	}
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,6 +11,7 @@ public class UIManager
 {
 	private int _order = 10;
 
+	private Dictionary<string, UI_Popup> _popups = new Dictionary<string, UI_Popup>();
 	private Stack<UI_Popup> _popupStack = new Stack<UI_Popup>();
 
 	private UI_Scene _sceneUI = null;
@@ -28,9 +30,27 @@ public class UIManager
 				root = new GameObject { name = "@UI_Root" };
 			return root;
 		}
-	}
+    }
 
-	public void SetCanvas(GameObject go, bool sort = true, int sortOrder = 0)
+    public void CacheAllPopups()
+    {
+		// 리셉션
+		// uiPopup 상속받은 모든걸 가져옴
+        var list = AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(assembly => assembly.GetTypes())
+            .Where(type => type.IsSubclassOf(typeof(UI_Popup)));
+
+        foreach (Type type in list)
+        {
+            CachePopupUI(type);
+        }
+
+        // ShowPopupUI<UI_WaypointPopup>();
+
+        CloseAllPopupUI();
+    }
+
+    public void SetCanvas(GameObject go, bool sort = true, int sortOrder = 0)
 	{
 		Canvas canvas = Util.GetOrAddComponent<Canvas>(go);
 		if (canvas == null)
@@ -119,18 +139,36 @@ public class UIManager
 		return sceneUI;
 	}
 
-	public T ShowPopupUI<T>(string name = null) where T : UI_Popup
+    public void CachePopupUI(Type type)
+    {
+        string name = type.Name;
+
+        if (_popups.TryGetValue(name, out UI_Popup popup) == false)
+        {
+            GameObject go = Managers.Resource.Instantiate(name);
+            popup = go.GetComponent<UI_Popup>();
+            _popups[name] = popup;
+        }
+
+        _popupStack.Push(popup);
+    }
+    public T ShowPopupUI<T>(string name = null) where T : UI_Popup
 	{
 		if (string.IsNullOrEmpty(name))
 			name = typeof(T).Name;
 
-		GameObject go = Managers.Resource.Instantiate(name);
-		T popup = Util.GetOrAddComponent<T>(go);
-		_popupStack.Push(popup);
+        if (_popups.TryGetValue(name, out UI_Popup popup) == false)
+        {
+            GameObject go = Managers.Resource.Instantiate(name);
+            popup = Util.GetOrAddComponent<T>(go);
+            _popups[name] = popup;
+        }
+        _popupStack.Push(popup);
+		popup.transform.SetParent(Root.transform);
+		popup.gameObject.SetActive(true);
 
-		go.transform.SetParent(Root.transform);
 
-		return popup;
+        return popup as T;
 	}
 
 	public void ClosePopupUI(UI_Popup popup)
@@ -153,8 +191,9 @@ public class UIManager
 			return;
 
 		UI_Popup popup = _popupStack.Pop();
-		Managers.Resource.Destroy(popup.gameObject);
-		_order--;
+		popup.gameObject.SetActive(false);
+        //Managers.Resource.Destroy(popup.gameObject);
+        _order--;
 	}
 
 	public void CloseAllPopupUI()
