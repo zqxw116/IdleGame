@@ -51,6 +51,13 @@ public class UI_TitleScene : UI_Scene
 			{
 				Managers.Data.Init();
 
+				// 데이터 있는지 확인
+				if (Managers.Game.LoadGame() == false)
+				{
+					Managers.Game.InitGame();
+					Managers.Game.SaveGame();
+                }
+
 				GetObject((int)GameObjects.Image_StartTouch).gameObject.SetActive(true);
 				GetText((int)Texts.Text_Display).text = "Touch To Start~!";
 
