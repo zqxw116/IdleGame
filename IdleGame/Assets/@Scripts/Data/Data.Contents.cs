@@ -313,4 +313,55 @@ namespace Data
         }
     }
     #endregion
+
+    #region Item
+    // Equipment.Weapon.Dagger
+    // Consumable.Potion.Hp
+    [Serializable]
+    public class BaseData
+    {
+        public int DataId;
+    }
+
+    [Serializable]
+    public class ItemData : BaseData
+    {
+        public string Name;
+        public EItemGroupType ItemGroupType;    // 대분류
+        public EItemType Type;                  // 중간분류
+        public EItemSubType SubType;            // 소분류
+        public EItemGrade Grade;
+        public int MaxStack;
+    }
+
+    [Serializable]
+    public class EquipmentData : ItemData
+    {
+        public int Damage;
+        public int Defence;
+        public int Speed;
+    }
+
+    [Serializable]
+    public class ConsumableData : ItemData
+    {
+        public double Value;
+        public int CoolTime;
+    }
+
+    [Serializable]
+    public class ItemDataLoader<T> : ILoader<int, T> where T : BaseData
+    {
+        public List<T> items = new List<T>();
+
+        public Dictionary<int, T> MakeDict()
+        {
+            Dictionary<int, T> dict = new Dictionary<int, T>();
+            foreach (T item in items)
+                dict.Add(item.DataId, item);
+
+            return dict;
+        }
+    }
+    #endregion
 }
