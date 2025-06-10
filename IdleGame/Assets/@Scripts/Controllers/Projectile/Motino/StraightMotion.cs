@@ -22,7 +22,7 @@ public class StraightMotion : ProjectileMotionBase
 	protected override IEnumerator CoLaunchProjectile()
     {
 		float journeyLengh = Vector3.Distance(StartPosition, TargetPosition);   // 얼마나 멀리 가야 하는가
-		float totalTime = journeyLengh / ProjectileData.ProjSpeed;
+		float totalTime = journeyLengh / _speed;
 		float elapsedTime = 0; // 얼마나 시간이 흘렀는가
 
         while (elapsedTime < totalTime)

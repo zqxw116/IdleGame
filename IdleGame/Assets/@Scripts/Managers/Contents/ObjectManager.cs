@@ -14,6 +14,7 @@ public class ObjectManager
 	public HashSet<EffectBase> Effects { get; } = new HashSet<EffectBase>();
 	public HeroCamp Camp{ get; private set; }
 	public HashSet<Npc> Npcs { get; } = new HashSet<Npc>();
+	public HashSet<ItemHolder> ItemHolders { get; } = new HashSet<ItemHolder>();
 
 	#region Roots
 	public Transform GetRootTransform(string name)
@@ -31,6 +32,7 @@ public class ObjectManager
 	public Transform EnvRoot { get { return GetRootTransform("@Envs"); } }
 	public Transform EffectRoot { get { return GetRootTransform("@Effects"); } }
 	public Transform NpcRoot { get { return GetRootTransform("@Npc"); } }
+	public Transform ItemHolderRoot { get { return GetRootTransform("@ItemHolder"); } }
     #endregion
 
     public void ShowDamageFont(Vector2 position, float damage, Transform parent, bool isCritical = false)
@@ -111,6 +113,15 @@ public class ObjectManager
 
             npc.SetInfo(templateID);
         }
+        else if(obj.ObjectType == EObjectType.ItemHolder)
+        {
+            obj.transform.parent = ItemHolderRoot;
+
+            ItemHolder itemHolder = go.GetOrAddComponent<ItemHolder>();
+            ItemHolders.Add(itemHolder);
+
+            //itemHolder.SetInfo(templateID);
+        }
 
         return obj as T; // obj만 반환하면 에러가 생김. 제네릭이 아니기 때문
     }
@@ -153,6 +164,12 @@ public class ObjectManager
             Npc npc = obj as Npc;
             Npcs.Remove(npc);
         }
+        else if (obj.ObjectType == EObjectType.ItemHolder)
+        {
+            ItemHolder itemHolder = obj as ItemHolder;
+            ItemHolders.Remove(itemHolder);
+        }
+
         Managers.Resource.Destroy(obj.gameObject);
 	}
 

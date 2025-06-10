@@ -1,3 +1,4 @@
+using Data;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,8 @@ using static Define;
 
 public class Monster : Creature
 {
-	public override ECreatureState CreatureState 
+	public Data.MonsterData MonsterData { get { return (Data.MonsterData)CreatureData; } }
+	public override ECreatureState CreatureState
 	{
 		get { return base.CreatureState; }
 		set
@@ -43,15 +45,15 @@ public class Monster : Creature
 
 		return true;
 	}
-    public override void SetInfo(int templateID)
-    {
-        base.SetInfo(templateID);
+	public override void SetInfo(int templateID)
+	{
+		base.SetInfo(templateID);
 
 		// State
 		CreatureState = ECreatureState.Idle;
 	}
 
-    void Start()
+	void Start()
 	{
 		_initPos = transform.position;
 	}
@@ -111,10 +113,10 @@ public class Monster : Creature
 		}
 		else
 		{
-            ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, AttackDistance);
+			ChaseOrAttackTarget(MONSTER_SEARCH_DISTANCE, AttackDistance);
 
-            // 너무 멀어지면 포기
-            if (Target.IsValid() == false)
+			// 너무 멀어지면 포기
+			if (Target.IsValid() == false)
 			{
 				Target = null;
 				_destPos = _initPos;
@@ -124,18 +126,18 @@ public class Monster : Creature
 	}
 
 	protected override void UpdateSkill()
-    {
-        base.UpdateSkill();
+	{
+		base.UpdateSkill();
 
-        if (Target.IsValid() == false)
-        {
+		if (Target.IsValid() == false)
+		{
 			Target = null;
 			_destPos = _initPos;
 			CreatureState = ECreatureState.Move;
 			return;
 		}
 
-		
+
 	}
 
 	protected override void UpdateDead()
@@ -156,8 +158,54 @@ public class Monster : Creature
 	public override void OnDead(BaseObject attacker, SkillBase skill)
 	{
 		base.OnDead(attacker, skill);
+		int dropItemId = MonsterData.DropItemId;
 
-		Managers.Object.Despawn(this);
+        RewardData rewardData = GetRandomReward();
+        if (rewardData != null)
+        {
+            var itemHolder = Managers.Object.Spawn<ItemHolder>(transform.position, dropItemId);
+            Vector2 ran = new Vector2(transform.position.x + Random.Range(-10, -15) * 0.1f, transform.position.y);
+            Vector2 ran2 = new Vector2(transform.position.x + Random.Range(10, 15) * 0.1f, transform.position.y);
+            Vector2 dropPos = Random.value < 0.5 ? ran : ran2;
+            itemHolder.SetInfo(0, rewardData.ItemTemplateId, dropPos);
+        }
+
+        Managers.Object.Despawn(this);
 	}
-    #endregion
+	#endregion
+
+	RewardData GetRandomReward()
+	{
+		if (MonsterData == null)
+			return null;
+
+		if (Managers.Data.DropTableDic.TryGetValue(MonsterData.DropItemId, out var dropTableData) == false)
+			return null;
+
+		if (dropTableData.Rewards.Count <= 0)
+			return null;
+
+		int sum = 0;
+		int randValue = UnityEngine.Random.Range(0, 100);
+		foreach (var item in dropTableData.Rewards)
+		{
+			sum += item.Probability;
+			if (randValue <= sum)
+				return item;
+		}
+		//return dropTableData.Rewards.RandomElementByWeight(e => e.Probability);
+		return null;
+	}
+
+
+	int GetRewardExp()
+	{
+		if (MonsterData == null)
+			return 0;
+
+		if (Managers.Data.DropTableDic.TryGetValue(MonsterData.DropItemId, out DropTableData dropTableData) == false)
+			return 0;
+
+        return dropTableData.RewardExp;
+    }
 }

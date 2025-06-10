@@ -2,7 +2,7 @@
   "heroes": [
     {
       "DataId": 201000,
-      "DescriptionTextID": "���ڵ�",
+      "DescriptionTextID": "위자드",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,
@@ -24,7 +24,7 @@
     },
     {
       "DataId": 201001,
-      "DescriptionTextID": "���ΰ�",
+      "DescriptionTextID": "주인공",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,
@@ -46,7 +46,7 @@
     },
     {
       "DataId": 201002,
-      "DescriptionTextID": "���ݼ���",
+      "DescriptionTextID": "연금술사",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,
@@ -68,7 +68,7 @@
     },
     {
       "DataId": 201003,
-      "DescriptionTextID": "����",
+      "DescriptionTextID": "사자",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,
@@ -90,7 +90,7 @@
     },
     {
       "DataId": 201004,
-      "DescriptionTextID": "����",
+      "DescriptionTextID": "뱀파",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,
@@ -112,7 +112,7 @@
     },
     {
       "DataId": 201020,
-      "DescriptionTextID": "����",
+      "DescriptionTextID": "오웬",
       "PrefabLabel": "HeroPrefab",
       "ColliderOffsetX": 0.0,
       "ColliderOffsetY": 0.5,

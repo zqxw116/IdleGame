@@ -39,6 +39,9 @@ namespace Data
     public class MonsterData : CreatureData
     {
         public int DropItemId;
+
+        [NonSerialized]
+        public DropTableData DropTable;
     }
 
     [Serializable]
@@ -363,5 +366,114 @@ namespace Data
             return dict;
         }
     }
+    #endregion
+
+    #region DropTable
+
+    public class RewardData
+    {
+        public int Probability; // 100분율
+        public int ItemTemplateId;
+        // public int Count;
+    }
+
+    // 액셀에서 직렬화 할 데이터 형식
+    [Serializable]
+    public class DropTableData_Internal
+    {
+        public int DataId;
+        public int RewardExp;
+        public int Prob1;
+        public int Item1;
+        public int Prob2;
+        public int Item2;
+        public int Prob3;
+        public int Item3;
+        public int Prob4;
+        public int Item4;
+        public int Prob5;
+        public int Item5;
+    }
+
+    // 역직렬화로 가져온 데이터를 가공한 드랍아이템 목록
+    [Serializable]
+    public class DropTableData
+    {
+        public int DataId;
+        public int RewardExp;
+        public List<RewardData> Rewards = new List<RewardData>();
+    }
+
+    // 역직렬화로 가져온 데이터를 DropTableData 형식으로 변환
+    [Serializable]
+    public class DropTableDataLoader : ILoader<int, DropTableData>
+    {
+        public List<DropTableData_Internal> dropTables = new List<DropTableData_Internal>();
+
+        public Dictionary<int, DropTableData> MakeDict()
+        {
+            Dictionary<int, DropTableData> dict = new Dictionary<int, DropTableData>();
+
+            foreach (DropTableData_Internal tempData in dropTables)
+            {
+                DropTableData data = new DropTableData()
+                {
+                    DataId = tempData.DataId,
+                    RewardExp = tempData.RewardExp,
+                };
+
+                if (tempData.Item1 > 0)
+                {
+                    data.Rewards.Add(new RewardData()
+                    {
+                        Probability = tempData.Prob1,
+                        ItemTemplateId = tempData.Item1,
+                    });
+                }
+
+                if (tempData.Item2 > 0)
+                {
+                    data.Rewards.Add(new RewardData()
+                    {
+                        Probability = tempData.Prob2,
+                        ItemTemplateId = tempData.Item2,
+                    });
+                }
+
+                if (tempData.Item3 > 0)
+                {
+                    data.Rewards.Add(new RewardData()
+                    {
+                        Probability = tempData.Prob3,
+                        ItemTemplateId = tempData.Item3,
+                    });
+                }
+
+                if (tempData.Item4 > 0)
+                {
+                    data.Rewards.Add(new RewardData()
+                    {
+                        Probability = tempData.Prob4,
+                        ItemTemplateId = tempData.Item4,
+                    });
+                }
+
+                if (tempData.Item5 > 0)
+                {
+                    data.Rewards.Add(new RewardData()
+                    {
+                        Probability = tempData.Prob5,
+                        ItemTemplateId = tempData.Item5,
+                    });
+                }
+
+                dict.Add(tempData.DataId, data);
+            }
+
+            return dict;
+        }
+    }
+
+
     #endregion
 }
