@@ -268,6 +268,75 @@ public static class Define
         WareHouse = 200,
     }
 
+    /// <summary>
+    /// 퀘스트 주기
+    /// </summary>
+    public enum EQuestPeriodType
+    {
+        Once, // 단발성
+        Daily,
+        Weekly,
+        Infinite, // 무한으로
+    }
+
+    /// <summary>
+    /// 퀘스트 조건
+    /// </summary>
+    public enum EQuestCondition
+    {
+        None,
+        Level,
+        ItemLevel,
+
+    }
+
+    public enum EQuestObjectiveType
+    {
+        KillMonster,
+
+        // 보통 이 아래 퀘스트처럼 자세히 적지 않고 UseItem로 합쳐서 적용하기도 함.
+        EarnMeat,
+        SpendMeat,
+        EarnWood,
+        SpendWood,
+        EarnMineral,
+        SpendMineral,
+        EarnGold,
+        SpendGold,
+
+        UseItem,
+        Survival,
+    }
+
+    public enum EQuestRewardType
+    {
+        Hero,
+        Gold,
+        Mineral,
+        Meat,
+        Wood,
+        Item,
+    }
+
+    public enum EQuestState
+    {
+        None,
+        Processing, // 진행중
+        Completed,  // 완료. 보상 안줌
+        Rewarded,   // 정말 완료. 보상받기
+    }
+
+    public enum EBroadcastEventType
+    {
+        None,
+        ChangeMeat,
+        ChangeWood,
+        ChangeMineral,
+        ChangeGold,
+        KillMonster,
+        LevelUp,
+    }
+
     // 나중에 없앨 하드코딩
     public const float EFFECT_SMALL_RADIUS = 2.5f;
     public const float EFFECT_NORMAL_RADIUS = 4.5f;

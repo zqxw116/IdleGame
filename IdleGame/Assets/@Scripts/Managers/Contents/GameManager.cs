@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using static Define;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -18,6 +19,10 @@ public class GameSaveData
     public List<HeroSaveData> Heroes = new List<HeroSaveData>();
     public int ItemDbIdGenerator = 1; // 1씩 증가해서 사용
     public List<ItemSaveData> Items = new List<ItemSaveData>();
+
+    public List<QuestSaveData> ProcessingQuests = new List<QuestSaveData>(); // 진행중
+    public List<QuestSaveData> CompletedQuests = new List<QuestSaveData>(); // 완료
+    public List<QuestSaveData> RewardedQuests = new List<QuestSaveData>(); // 보상 받음
 }
 
 [Serializable]
@@ -27,6 +32,13 @@ public class HeroSaveData
     public int Level = 1;
     public int Exp = 0;
     public HeroOwningState OwningState = HeroOwningState.Unowned;
+}
+
+public enum HeroOwningState
+{
+    Unowned,
+    Owned,
+    Picked, // 컨택해서 사용하고 있다.
 }
 [Serializable]
 public class ItemSaveData
@@ -39,12 +51,13 @@ public class ItemSaveData
     // public int OwnerId;
     public int EnchantCount;
 }
-
-public enum HeroOwningState
+[Serializable]
+public class QuestSaveData
 {
-    Unowned,
-    Owned,
-    Picked, // 컨택해서 사용하고 있다.
+    public int TemplateId;
+    public EQuestState State = EQuestState.None;
+    public List<int> ProgressCount = new List<int>();
+    public DateTime NextResetTime; // 클라면 조작 가능, 서버는 절대 못함
 }
 public class GameManager
 {
@@ -58,7 +71,7 @@ public class GameManager
         private set
         {
             _saveData.Wood = value;
-            //(Managers.UI.SceneUI as UI_GameScene)?.RefreshWoodText();
+            BroadcastEvent(EBroadcastEventType.ChangeWood, value);
         }
     }
 
@@ -68,7 +81,7 @@ public class GameManager
         private set
         {
             _saveData.Mineral = value;
-            //(Managers.UI.SceneUI as UI_GameScene)?.RefreshMineralText();
+            BroadcastEvent(EBroadcastEventType.ChangeMineral, value);
         }
     }
 
@@ -78,7 +91,7 @@ public class GameManager
         private set
         {
             _saveData.Meat = value;
-            //(Managers.UI.SceneUI as UI_GameScene)?.RefreshMeatText();
+            BroadcastEvent(EBroadcastEventType.ChangeMeat, value);
         }
     }
 
@@ -88,9 +101,19 @@ public class GameManager
         private set
         {
             _saveData.Gold = value;
-            //(Managers.UI.SceneUI as UI_GameScene)?.RefreshGoldText();
+            BroadcastEvent(EBroadcastEventType.ChangeGold, value);
         }
     }
+
+    /// <summary>
+    /// 재화 등이 변경될 때 변경될 함수를 호출하게되면 복잡해지고 코드가 늘어난다.
+    /// 필요한 함수를 구독해둬서 broadcast로 전달한다.
+    /// </summary>
+    public void BroadcastEvent(EBroadcastEventType eventType, int value)
+    {
+        OnBroadcastEvent?.Invoke(eventType, value);
+    }
+
 
     public List<HeroSaveData> AllHeroes { get { return _saveData.Heroes; } }
     public int TotalHeroCount { get { return _saveData.Heroes.Count; } }
@@ -214,8 +237,21 @@ public class GameManager
 
         // Quest
         {
+            SaveData.ProcessingQuests.Clear();
+            SaveData.CompletedQuests.Clear();
+            SaveData.RewardedQuests.Clear();
 
+            foreach (Quest item in Managers.Quest.ProcessingQuests)
+                SaveData.ProcessingQuests.Add(item.SaveData);
+
+            foreach (Quest item in Managers.Quest.CompletedQuests)
+                SaveData.CompletedQuests.Add(item.SaveData);
+
+            foreach (Quest item in Managers.Quest.RewardedQuests)
+                SaveData.RewardedQuests.Add(item.SaveData);
         }
+
+
         string jsonStr = JsonUtility.ToJson(Managers.Game.SaveData);
         File.WriteAllText(Path, jsonStr);
         Debug.Log($"Save Game Completed : {Path}");
@@ -247,14 +283,38 @@ public class GameManager
 
         // Quest
         {
+            Managers.Quest.Clear();
+
+            foreach (QuestSaveData questSaveData in data.ProcessingQuests)
+            {
+                Managers.Quest.AddQuest(questSaveData);
+            }
+
+            foreach (QuestSaveData questSaveData in data.CompletedQuests)
+            {
+                Managers.Quest.AddQuest(questSaveData);
+            }
+
+            foreach (QuestSaveData questSaveData in data.RewardedQuests)
+            {
+                Managers.Quest.AddQuest(questSaveData);
+            }
+
+            Managers.Quest.AddUnknownQuests();
 
         }
+
+
         Debug.Log($"Save Game Loaded : {Path}");
         return true;
     }
     #endregion
+
+
     #region Action
     public event Action<Vector2> OnMoveDirChanged;						// 리스너 형태. 전체 브로드케스트를함
     public event Action<Define.EJoystickState> OnJoystickStateChanged;	// 리스너 형태. 전체 브로드케스트를함
+
+    public event Action<EBroadcastEventType, int> OnBroadcastEvent;	// 변경될 사항으로 전달
     #endregion
 }
