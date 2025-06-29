@@ -89,6 +89,8 @@ public class Managers : MonoBehaviour
 
             // 초기화
             s_instance = go.GetComponent<Managers>();
+
+            s_instance._quest.Init(); // Quest.Init(); 이것도 내부적으로 s_instance를 호출해서 무한루프가 될 수 있기 때문.
         }
     }
 }

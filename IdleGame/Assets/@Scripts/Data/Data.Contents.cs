@@ -39,9 +39,6 @@ namespace Data
     public class MonsterData : CreatureData
     {
         public int DropItemId;
-
-        [NonSerialized]
-        public DropTableData DropTable;
     }
 
     [Serializable]
@@ -280,6 +277,7 @@ namespace Data
         public string PrefabLabel;
         public string SpriteName;
         public string SkeletonDataID;
+        public int QuestDataId;
     }
 
     [Serializable]
@@ -482,10 +480,10 @@ namespace Data
     [Serializable]
     public class QuestData
     {
-        public int TemplateId;
+        public int DataId;
+        public string Name;
         public string DescriptionTextId;
         public EQuestPeriodType QuestPeriodType;    // 퀘스트 주기
-        //public EQuestCondition Condition;         // 퀘스트 조건 // 여기 프로젝트에서는 굳이 필요하지는 않음.
         public List<QuestTaskData> QuestTasks = new List<QuestTaskData>(); // 퀘스트 임무
         public List<QuestRewardData> Rewards = new List<QuestRewardData>();// 퀘스트 보상
     }
@@ -494,7 +492,6 @@ namespace Data
     public class QuestTaskData
     {
         public EQuestObjectiveType ObjectiveType; // 퀘스트 목적
-        public string DescriptionTextId;
         public int ObjectiveDataId;
         public int ObjectiveCount;
     }
@@ -515,7 +512,7 @@ namespace Data
         {
             Dictionary<int, QuestData> dict = new Dictionary<int, QuestData>();
             foreach (QuestData quest in quests)
-                dict.Add(quest.TemplateId, quest);
+                dict.Add(quest.DataId, quest);
             return dict;
         }
     }

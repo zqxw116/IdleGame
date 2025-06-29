@@ -1,22 +1,22 @@
-ï»¿DataId,Name,ClassName,SkeletonDataId,SoundLabel,Duration,alleyEffects,EnemyEffects,AnimName
-80001,ë§¹ë…í™•ì‚°1 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60006,idle
-80002,ë§¹ë…í™•ì‚°2 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60007,idle
-80003,ë§¹ë…í™•ì‚°3 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60008,idle
-80004,ëƒ‰ê¸°í™•ì‚°1 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60009,idle
-80005,ëƒ‰ê¸°í™•ì‚°2 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60010,idle
-80006,ëƒ‰ê¸°í™•ì‚°3 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60011,idle
-80007,í™”ì—¼ê²€ AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60012,skill_a_small
-80008,í™”ì—¼ê²€ AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60013,skill_a_normal
-80009,í™”ì—¼ê²€ AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60014,skill_a_big
-80010,ë‹¤ì¤‘í™”ì—¼ê²€ AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_small
-80011,ë‹¤ì¤‘í™”ì—¼ê²€ AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_normal
-80012,ë‹¤ì¤‘í™”ì—¼ê²€ AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_big
-80013,ì¸í˜•ì˜ ë‚œíƒ€ 1,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_small
-80014,ì¸í˜•ì˜ ë‚œíƒ€ 2,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_normal
-80015,ì¸í˜•ì˜ ë‚œíƒ€ 3,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_big
-80016,ì¸í˜•ì˜ ë¸Œë ˆìŠ¤ 1,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60012,skill_a_small
-80017,ì¸í˜•ì˜ ë¸Œë ˆìŠ¤ 2,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60013,skill_a_normal
-80018,ì¸í˜•ì˜ ë¸Œë ˆìŠ¤ 3,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60014,skill_a_big
-80019,ê¶Œë²•ì—°íƒ€ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001&61005,,skill_a_small
-80020,ê¶Œë²•ì—°íƒ€ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001&61005,,skill_a_normal
-80021,ê¶Œë²•ì—°íƒ€ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001&61005,,skill_a_big
+DataId,Name,ClassName,SkeletonDataId,SoundLabel,Duration,alleyEffects,EnemyEffects,AnimName
+80001,¸Íµ¶È®»ê1 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60006,idle
+80002,¸Íµ¶È®»ê2 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60007,idle
+80003,¸Íµ¶È®»ê3 AOE,PoisonSpreadAoE,loren_skill_1_SkeletonData,,5,,60008,idle
+80004,³Ã±âÈ®»ê1 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60009,idle
+80005,³Ã±âÈ®»ê2 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60010,idle
+80006,³Ã±âÈ®»ê3 AOE,ColdSpreadAoE,loren_skill_2_SkeletonData,,0.5,,60011,idle
+80007,È­¿°°Ë AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60012,skill_a_small
+80008,È­¿°°Ë AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60013,skill_a_normal
+80009,È­¿°°Ë AOE,ConeShapeAoE,owen_skill_1_SkeletonData,,1,,60014,skill_a_big
+80010,´ÙÁßÈ­¿°°Ë AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_small
+80011,´ÙÁßÈ­¿°°Ë AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_normal
+80012,´ÙÁßÈ­¿°°Ë AOE,CircleShapeAoE,owen_skill_2_SkeletonData,,1,,,skill_b_big
+80013,ÀÎÇüÀÇ ³­Å¸ 1,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_small
+80014,ÀÎÇüÀÇ ³­Å¸ 2,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_normal
+80015,ÀÎÇüÀÇ ³­Å¸ 3,CircleShapeAoE,veti_skill_1_SkeletonData,,,,,skill_a_big
+80016,ÀÎÇüÀÇ ºê·¹½º 1,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60012,skill_a_small
+80017,ÀÎÇüÀÇ ºê·¹½º 2,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60013,skill_a_normal
+80018,ÀÎÇüÀÇ ºê·¹½º 3,ConeShapeAoE,owen_skill_1_SkeletonData,,,,60014,skill_a_big
+80019,±Ç¹ı¿¬Å¸ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001,,skill_a_small
+80020,±Ç¹ı¿¬Å¸ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001,,skill_a_normal
+80021,±Ç¹ı¿¬Å¸ AoE,CircleShapeAoE,veti_skill_1_SkeletonData,,,61001,,skill_a_big

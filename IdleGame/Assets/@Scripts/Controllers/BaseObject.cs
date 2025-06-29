@@ -117,6 +117,8 @@ public class BaseObject : InitBase
     {
         if (SkeletonAnim == null)
             return null;
+        if (SkeletonAnim.AnimationState == null)
+            return null;
 
         TrackEntry entry = SkeletonAnim.AnimationState.SetAnimation(trackIndex, animName, loop);
         entry.MixDuration = animName == AnimName.DEAD ? 0 : 0.2f;

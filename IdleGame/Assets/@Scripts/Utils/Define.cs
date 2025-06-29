@@ -48,14 +48,23 @@ public static class Define
 
     public enum ENpcType
     {
-        Camp,
+        None,
+        StartPosition,
+        Guild,
         Portal,
         Waypoint,
         BlackSmith,
-        Guild,
+        Training,
         TreasureBox,
-        Dungeon
+        Dungeon,
+        Quest,
+        GoldStorage,
+        WoodStorage,
+        MineralStorage,
+        Exchange,
+        RuneStone,
     }
+
     public enum ECreatureState
     {
         None,
@@ -290,11 +299,10 @@ public static class Define
 
     }
 
+
     public enum EQuestObjectiveType
     {
         KillMonster,
-
-        // 보통 이 아래 퀘스트처럼 자세히 적지 않고 UseItem로 합쳐서 적용하기도 함.
         EarnMeat,
         SpendMeat,
         EarnWood,
@@ -303,9 +311,9 @@ public static class Define
         SpendMineral,
         EarnGold,
         SpendGold,
-
         UseItem,
         Survival,
+        ClearDungeon
     }
 
     public enum EQuestRewardType
@@ -333,8 +341,24 @@ public static class Define
         ChangeWood,
         ChangeMineral,
         ChangeGold,
+        ChangeDia,
+        ChangeMaterials,
         KillMonster,
         LevelUp,
+        DungeonClear,
+        ChangeInventory,
+        ChangeCrew,
+        QuestClear,
+    }
+
+    public enum EResourceType
+    {
+        Wood,
+        Mineral,
+        Meat,
+        Gold,
+        Materials,
+        Dia
     }
 
     // 나중에 없앨 하드코딩

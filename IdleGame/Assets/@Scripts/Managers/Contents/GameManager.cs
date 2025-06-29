@@ -240,15 +240,6 @@ public class GameManager
             SaveData.ProcessingQuests.Clear();
             SaveData.CompletedQuests.Clear();
             SaveData.RewardedQuests.Clear();
-
-            foreach (Quest item in Managers.Quest.ProcessingQuests)
-                SaveData.ProcessingQuests.Add(item.SaveData);
-
-            foreach (Quest item in Managers.Quest.CompletedQuests)
-                SaveData.CompletedQuests.Add(item.SaveData);
-
-            foreach (Quest item in Managers.Quest.RewardedQuests)
-                SaveData.RewardedQuests.Add(item.SaveData);
         }
 
 

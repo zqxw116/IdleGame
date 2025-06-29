@@ -10,12 +10,8 @@ public class QuestManager
 {
 	public Dictionary<int, Quest> AllQuests = new Dictionary<int, Quest>();
 
-	public List<Quest> WaitingQuests { get; } = new List<Quest>();	 // 대기 
-	public List<Quest> ProcessingQuests { get; } = new List<Quest>();// 진행
-	public List<Quest> CompletedQuests { get; } = new List<Quest>(); // 완료
-	public List<Quest> RewardedQuests { get; } = new List<Quest>();	 // 보상
 
-	public QuestManager()
+	public void Init()
 	{
 		Managers.Game.OnBroadcastEvent -= OnHandleBroadcastEvent;
 		Managers.Game.OnBroadcastEvent += OnHandleBroadcastEvent;
@@ -28,12 +24,12 @@ public class QuestManager
 	{
 		foreach (QuestData questData in Managers.Data.QuestDic.Values.ToList())
 		{
-			if (AllQuests.ContainsKey(questData.TemplateId))
+			if (AllQuests.ContainsKey(questData.DataId))
 				continue;
 
 			QuestSaveData questSaveData = new QuestSaveData()
 			{
-				TemplateId = questData.TemplateId,
+				TemplateId = questData.DataId,
 				State = Define.EQuestState.None,
 				NextResetTime = DateTime.MaxValue,
 			};
@@ -62,21 +58,6 @@ public class QuestManager
 		if (quest == null)
 			return null;
 
-		switch (quest.State)
-		{
-			case Define.EQuestState.None:
-				WaitingQuests.Add(quest);
-				break;
-			case Define.EQuestState.Processing:
-				ProcessingQuests.Add(quest);
-				break;
-			case Define.EQuestState.Completed:
-				CompletedQuests.Add(quest);
-				break;
-			case Define.EQuestState.Rewarded:
-				RewardedQuests.Add(quest);
-				break;
-		}
 
 		AllQuests.Add(quest.TemplateId, quest);
 
@@ -86,16 +67,11 @@ public class QuestManager
 	public void Clear()
 	{
 		AllQuests.Clear();
-
-		WaitingQuests.Clear();
-		ProcessingQuests.Clear();
-		CompletedQuests.Clear();
-		RewardedQuests.Clear();
 	}
 
 	void OnHandleBroadcastEvent(EBroadcastEventType eventType, int value)
 	{
-		foreach (Quest quest in ProcessingQuests)
+		foreach (Quest quest in AllQuests.Values)
 		{
 			quest.OnHandleBroadcastEvent(eventType, value);
 		}
