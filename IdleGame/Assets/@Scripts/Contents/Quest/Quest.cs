@@ -99,9 +99,9 @@ public class Quest
                     Managers.Game.EarnResource(EResourceType.Gold, reward.RewardCount);
                     break;
                 case EQuestRewardType.Hero:
-                    //int heroId = reward.RewardDataId;
-                    //Managers.Hero.AcquireHeroCard(heroId, reward.RewardCount);
-                    //Managers.Hero.PickHero(heroId, Vector3Int.zero);
+                    int heroId = reward.RewardDataId;
+                    Managers.Hero.AcquireHeroCard(heroId, reward.RewardCount);
+                    Managers.Hero.PickHero(heroId, Vector3Int.zero);
                     break;
                 case EQuestRewardType.Meat:
                     Managers.Game.EarnResource(EResourceType.Meat, reward.RewardCount);
@@ -122,7 +122,7 @@ public class Quest
 	{
 		if (eventType == EBroadcastEventType.QuestClear)
 			return;
-		GetCurrentTask().OnHandleBroadcastEvent(eventType, value);
+		GetCurrentTask()?.OnHandleBroadcastEvent(eventType, value);
 
 
         for (int i = 0; i < _questTasks.Count; i++)

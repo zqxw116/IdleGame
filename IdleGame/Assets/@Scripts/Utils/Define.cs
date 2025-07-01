@@ -32,6 +32,12 @@ public static class Define
         Effect,
         Max,
     }
+    public enum EHeroOwningState
+    {
+        Unowned,
+        Owned,
+        Picked, // 컨택해서 사용하고 있다.
+    }
 
     public enum EObjectType
     {

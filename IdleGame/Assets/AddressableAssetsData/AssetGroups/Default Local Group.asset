@@ -23,7 +23,7 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1a7a1f2454464f544b71ffe92133a16f
+  - m_GUID: 73b75f13a4f5f1b489f258c2a126511c
     m_Address: QuestData
     m_ReadOnly: 0
     m_SerializedLabels:
