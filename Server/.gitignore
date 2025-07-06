@@ -1,0 +1,22 @@
+# 빌드 결과물
+bin/
+obj/
+# 사용자 설정
+*.user
+*.suo
+.vs/
+# 로그 및 임시 파일
+*.log
+*.tmp
+*.cache
+# 배포 결과물
+publish/
+AppPackages/
+# Node.js 패키지
+node_modules/
+# 기타
+*.pdb
+*.dbmdl
+*.dbproj.schemaview
+*.pfx
+*.publishsettings
