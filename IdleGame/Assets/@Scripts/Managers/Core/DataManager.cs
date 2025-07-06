@@ -43,7 +43,8 @@ public class DataManager
         EnvDic = LoadJson<Data.EnvDataLoader, int, Data.EnvData>("EnvData").MakeDict();
         EffectDic = LoadJson<Data.EffectDataLoader, int, Data.EffectData>("EffectData").MakeDict();
         AoEDic = LoadJson<Data.AoEDataLoader, int, Data.AoEData>("AoEData").MakeDict();
-        NpcDic = LoadJson<Data.NpcDataLoader, int, Data.NpcData>("NpcData").MakeDict();
+        var npcLoader = LoadJson<Data.NpcDataLoader, int, Data.NpcData>("NpcData");
+        NpcDic = npcLoader.MakeDict();
         TextDic = LoadJson<Data.TextDataLoader, string, Data.TextData>("TextData").MakeDict();
 
         EquipmentDic = LoadJson<Data.ItemDataLoader<Data.EquipmentData>, int, Data.EquipmentData>("Item_EquipmentData").MakeDict();
@@ -58,6 +59,9 @@ public class DataManager
             ItemDic.Add(item.Key, item.Value);
         foreach (var item in ConsumableDic)
             ItemDic.Add(item.Key, item.Value);
+
+        // Validation 나중에 유효한지 확인 체크하면 좋다.
+        // npcLoader.
     }
 
     private Loader LoadJson<Loader, Key, Value>(string path) where Loader : ILoader<Key, Value>

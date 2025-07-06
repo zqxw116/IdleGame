@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using UnityEngine;
 using static Define;
 
@@ -132,5 +133,30 @@ public static class Util
         }
 
         return default(T);
+    }
+
+    /// <summary>
+    /// 추후도메인 주소 넣으면 ip주소 받을 수 있게 미리 
+    /// </summary>
+    public static IPAddress GetIpv4Address(string hostAddress)
+    {
+        IPAddress[] ipAddr = Dns.GetHostAddresses(hostAddress);
+
+        if (ipAddr.Length == 0)
+        {
+            Debug.LogError("AuthServer DNS Failed");
+            return null;
+        }
+
+        foreach (IPAddress ip in ipAddr)
+        {
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                return ip;
+            }
+        }
+
+        Debug.LogError("AuthServer IPv4 Failed");
+        return null;
     }
 }

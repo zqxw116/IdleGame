@@ -8,15 +8,15 @@ public class Managers : MonoBehaviour
 {
     public static bool Initialized { get; set; } = false; // 한번 더 체크
     private static Managers s_instance;
-    private static Managers Instance { get { Init(); return s_instance; } }
+    public static Managers Instance { get { Init(); return s_instance; } }
 
     #region Contents
     private GameManager _game = new GameManager();
     private ObjectManager _object = new ObjectManager();
-    private MapManager _map= new MapManager();
+    private MapManager _map = new MapManager();
     private InventoryManager _inventory = new InventoryManager();
-    private QuestManager _quest= new QuestManager();
-    private HeroManager _hero= new HeroManager();
+    private QuestManager _quest = new QuestManager();
+    private HeroManager _hero = new HeroManager();
 
     public static GameManager Game { get { return Instance?._game; } }
     public static ObjectManager Object { get { return Instance?._object; } }
@@ -33,6 +33,7 @@ public class Managers : MonoBehaviour
     private SceneManagerEx _scene = new SceneManagerEx();
     private SoundManager _sound = new SoundManager();
     private UIManager _ui = new UIManager();
+    private WebManager _web = new WebManager();
 
     public static DataManager Data { get { return Instance?._data; } }
     public static PoolManager Pool { get { return Instance?._pool; } }
@@ -40,6 +41,7 @@ public class Managers : MonoBehaviour
     public static SceneManagerEx Scene { get { return Instance?._scene; } }
     public static SoundManager Sound { get { return Instance?._sound; } }
     public static UIManager UI { get { return Instance?._ui; } }
+    public static WebManager Web { get { return Instance?._web; } }
     #endregion
 
     #region Language
@@ -93,6 +95,7 @@ public class Managers : MonoBehaviour
             s_instance = go.GetComponent<Managers>();
 
             s_instance._quest.Init(); // Quest.Init(); 이것도 내부적으로 s_instance를 호출해서 무한루프가 될 수 있기 때문.
+            s_instance._web.Init();
         }
     }
 }
