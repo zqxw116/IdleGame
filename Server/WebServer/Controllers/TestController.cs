@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebServer.Services;
 
 namespace WebServer.Controllers
 {
@@ -11,6 +12,11 @@ namespace WebServer.Controllers
     [Route("test")]
     public class TestController : ControllerBase
     {
+        AccountService _service;
+        public TestController(AccountService service)
+        {
+            _service = service;
+        }
         // ip:port/test/hello
         [HttpPost]
         [Route("hello")]
@@ -18,6 +24,8 @@ namespace WebServer.Controllers
         {
             TestPackRes result = new TestPackRes();
             result.success = true;
+
+            int id = _service.GenerateAccountID();
             return result;
 
         }
