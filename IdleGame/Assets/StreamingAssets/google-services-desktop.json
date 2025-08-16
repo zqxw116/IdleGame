@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "658110665747",
+    "project_id": "idlegame-auth",
+    "storage_bucket": "idlegame-auth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658110665747:android:7471cb27563edb15071be6",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.IdleGame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658110665747-8tjmrebnkgba011iku4qvrn4k5lqkdlu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.DefaultCompany.IdleGame",
+            "certificate_hash": "ea8244a314f2785d5c33120b382ea69196709c87"
+          }
+        },
+        {
+          "client_id": "658110665747-sopd9opmeb49k54ub83ck88iip9s9sdp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxH2fGdl5KQOLKleRN2jljEggipjnGQPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658110665747-sopd9opmeb49k54ub83ck88iip9s9sdp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

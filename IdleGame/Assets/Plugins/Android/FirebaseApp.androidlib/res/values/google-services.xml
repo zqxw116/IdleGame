@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id,@string/default_android_client_id,@string/default_web_client_id">
+  <string name="gcm_defaultSenderId" translatable="false">658110665747</string>
+  <string name="google_storage_bucket" translatable="false">idlegame-auth.firebasestorage.app</string>
+  <string name="project_id" translatable="false">idlegame-auth</string>
+  <string name="google_api_key" translatable="false">AIzaSyDxH2fGdl5KQOLKleRN2jljEggipjnGQPw</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDxH2fGdl5KQOLKleRN2jljEggipjnGQPw</string>
+  <string name="google_app_id" translatable="false">1:658110665747:android:7471cb27563edb15071be6</string>
+  <string name="default_android_client_id" translatable="false">658110665747-8tjmrebnkgba011iku4qvrn4k5lqkdlu.apps.googleusercontent.com</string>
+  <string name="default_web_client_id" translatable="false">658110665747-sopd9opmeb49k54ub83ck88iip9s9sdp.apps.googleusercontent.com</string>
+</resources>
