@@ -101,12 +101,6 @@ MonoBehaviour:
     m_SerializedLabels:
     - PreLoad
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4f3bb8bb48f0e7346b62204f1fa35dea
-    m_Address: debuff_poison_1_SkeletonData
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - PreLoad
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e08eef4aa88f9d54892b3030c980a1c4
     m_Address: 006_SkeletonData
     m_ReadOnly: 0
