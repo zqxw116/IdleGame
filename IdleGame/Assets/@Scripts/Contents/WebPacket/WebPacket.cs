@@ -1,22 +1,18 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using static Define;
 
-
-// 서버와 같은 형식
-namespace WebPacket
+[Serializable]
+public class LoginAccountPacketReq
 {
-	[Serializable]
-	public class TestPacketReq
-	{
-		public string userId;
-		public string token;
-	}
+	public string userId;// { get; set; } = String.Empty;
+	public string token ;//{ get; set; } = string.Empty;
+}
 
-	[Serializable]
-	public class TestPacketRes
-	{
-		public bool success;
-	}
+[Serializable]
+public class LoginAccountPacketRes
+{
+	public EProviderType providerType; // { get; set; }
+	public bool success; // { get; set; } = false;
+	public long accountDbId; // { get; set; }
+	public string jwt; // { get; set; } = string.Empty;
 }

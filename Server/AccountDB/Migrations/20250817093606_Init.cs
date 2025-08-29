@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace GameDB.Migrations
+namespace AccountDB.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration
@@ -11,24 +11,31 @@ namespace GameDB.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Test",
+                name: "Account",
                 columns: table => new
                 {
-                    TestDbId = table.Column<int>(type: "int", nullable: false)
+                    AccountDbId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LoginProviderUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProviderType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Test", x => x.TestDbId);
+                    table.PrimaryKey("PK_Account", x => x.AccountDbId);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Account_LoginProviderUserId",
+                table: "Account",
+                column: "LoginProviderUserId",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Test");
+                name: "Account");
         }
     }
 }
